@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:this="clr-namespace:Edge.SDK.ServiceTester"
 		xmlns:ui="http://schemas.aspitalia.com/Ricciolo/Controls"
+		Icon="..\images\App.ico"
         Title="Edge Service Tester"
 		Height="480"
 		Width="640">
@@ -82,11 +83,17 @@
 				<GridViewColumn Header="Progress" Width="200">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<ProgressBar Width="150" Maximum="100" Value="{Binding Path=Progress, Mode=OneWay}" Margin="0 0 5 0" VerticalAlignment="Stretch" />
-								<TextBlock Text="{Binding Progress}"/>
-								<TextBlock Text="%"/>
-							</StackPanel>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="30"/>
+								</Grid.ColumnDefinitions>
+								<ProgressBar Maximum="100" Value="{Binding Path=Progress, Mode=OneWay}" Margin="0 0 5 0" VerticalAlignment="Stretch" Grid.Column="0" />
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+									<TextBlock Text="{Binding Progress}"/>
+									<TextBlock Text="%"/>
+								</StackPanel>
+							</Grid>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
