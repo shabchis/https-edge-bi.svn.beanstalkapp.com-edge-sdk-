@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Edge Service</Name>
+    <Description>A basic Edge service.</Description>
+    <Icon>EdgeService.ico</Icon>
+    <TemplateID>674a4d6d-697c-4197-a387-9fc6ea25402d</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <DefaultName>Service.cs</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+		<References>
+			<Reference>
+				<Assembly>System</Assembly>
+				<Assembly>Edge.Core</Assembly>
+			</Reference>
+		</References>
+    <ProjectItem ReplaceParameters="true">Service.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

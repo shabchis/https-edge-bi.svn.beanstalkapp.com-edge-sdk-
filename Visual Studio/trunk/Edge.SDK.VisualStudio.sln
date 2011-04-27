@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.SDK.VisualStudio", "Edge.SDK.VisualStudio\Edge.SDK.VisualStudio.csproj", "{D457F135-4F53-4A9C-BE23-63BCC106D2E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{C264CCC5-901E-4F8F-8B41-6D1B2ADE49D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{116D6FE0-F93C-4047-B864-D25C6EB7C3B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{812C692E-340B-4EB4-8449-3B33E4975B77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{E7D37517-B388-409B-8342-8A88EA8703D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeServiceItem", "Templates\Items\GeneralService\EdgeServiceItem.csproj", "{08FA4B42-3818-4DB6-852A-C66BB13A531A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeServiceLibraryProject", "Templates\Projects\ServiceLibrary\EdgeServiceLibraryProject.csproj", "{1860E603-7944-49A7-8724-EEA42269ED08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgePipelineServiceLibraryProject", "Templates\Projects\EdgePipelineServiceLibraryProject\EdgePipelineServiceLibraryProject.csproj", "{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D457F135-4F53-4A9C-BE23-63BCC106D2E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D457F135-4F53-4A9C-BE23-63BCC106D2E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D457F135-4F53-4A9C-BE23-63BCC106D2E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D457F135-4F53-4A9C-BE23-63BCC106D2E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FA4B42-3818-4DB6-852A-C66BB13A531A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FA4B42-3818-4DB6-852A-C66BB13A531A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FA4B42-3818-4DB6-852A-C66BB13A531A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FA4B42-3818-4DB6-852A-C66BB13A531A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1860E603-7944-49A7-8724-EEA42269ED08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1860E603-7944-49A7-8724-EEA42269ED08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1860E603-7944-49A7-8724-EEA42269ED08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1860E603-7944-49A7-8724-EEA42269ED08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D457F135-4F53-4A9C-BE23-63BCC106D2E8} = {C264CCC5-901E-4F8F-8B41-6D1B2ADE49D2}
+		{812C692E-340B-4EB4-8449-3B33E4975B77} = {116D6FE0-F93C-4047-B864-D25C6EB7C3B3}
+		{E7D37517-B388-409B-8342-8A88EA8703D3} = {116D6FE0-F93C-4047-B864-D25C6EB7C3B3}
+		{1860E603-7944-49A7-8724-EEA42269ED08} = {812C692E-340B-4EB4-8449-3B33E4975B77}
+		{CD806F4D-FA86-48A3-BD69-C9092FA2A4C8} = {812C692E-340B-4EB4-8449-3B33E4975B77}
+		{08FA4B42-3818-4DB6-852A-C66BB13A531A} = {E7D37517-B388-409B-8342-8A88EA8703D3}
+	EndGlobalSection
+EndGlobal

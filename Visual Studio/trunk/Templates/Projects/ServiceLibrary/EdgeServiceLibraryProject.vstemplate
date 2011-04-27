@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+	<TemplateData>
+		<Name>Edge Service Library</Name>
+		<Description>Create and test services that can be run in the Edge environment.</Description>
+		<Icon>EdgeServiceLibraryProject.ico</Icon>
+		<ProjectType>CSharp</ProjectType>
+		<ProjectSubType></ProjectSubType>
+		<RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
+		<SortOrder>1000</SortOrder>
+		<TemplateID>1ace8d25-3795-42ab-b906-f12a6758b13c</TemplateID>
+		<CreateNewFolder>true</CreateNewFolder>
+		<DefaultName>EdgeServiceLibrary</DefaultName>
+		<ProvideDefaultName>true</ProvideDefaultName>
+	</TemplateData>
+	<TemplateContent>
+		<Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+			<ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+			<ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs.template">AssemblyInfo.cs.template</ProjectItem>
+			<ProjectItem ReplaceParameters="true" TargetFileName="ExampleService.cs" OpenInEditor="true">ExampleService.cs</ProjectItem>
+			<ProjectItem ReplaceParameters="true" TargetFileName="Edge.Services.config" OpenInEditor="false">Edge.Services.config</ProjectItem>
+		</Project>
+	</TemplateContent>
+</VSTemplate>
