@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core", "..\..\..\Frame
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Data.Pipeline", "..\..\..\Framework\Edge.Data.Pipeline\Edge.Data.Pipeline.csproj", "{53391A99-E8CA-4262-A8E0-5F05A1CC6608}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ricciolo.Controls.TreeListView", "..\..\..\(third party)\WPF\Ricciolo.Controls.TreeListView\Ricciolo.Controls.TreeListView.csproj", "{59A4159D-1038-4770-91DF-154A22CDE411}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(third party)", "(third party)", "{28AA506C-4AC8-4265-A4BA-A1715810729D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,21 +47,8 @@ Global
 		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|x86.ActiveCfg = Release|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Release|Any CPU.Build.0 = Release|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{59A4159D-1038-4770-91DF-154A22CDE411}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{59A4159D-1038-4770-91DF-154A22CDE411} = {28AA506C-4AC8-4265-A4BA-A1715810729D}
 	EndGlobalSection
 EndGlobal
