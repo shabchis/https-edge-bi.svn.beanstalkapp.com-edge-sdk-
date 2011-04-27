@@ -39,6 +39,10 @@
     <ApplicationIcon>images\App.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ricciolo.Controls.TreeListView, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ffedd4b1334b06f5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\(third party)\WPF\Ricciolo.Controls.TreeListView\lib\Ricciolo.Controls.TreeListView.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -104,10 +108,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\%28third party%29\WPF\Ricciolo.Controls.TreeListView\Ricciolo.Controls.TreeListView.csproj">
-      <Project>{59A4159D-1038-4770-91DF-154A22CDE411}</Project>
-      <Name>Ricciolo.Controls.TreeListView</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Framework\Edge.Core\Edge.Core.csproj">
       <Project>{AD4B53AD-B28A-4E90-9483-D2F7C8E6D436}</Project>
       <Name>Edge.Core</Name>
