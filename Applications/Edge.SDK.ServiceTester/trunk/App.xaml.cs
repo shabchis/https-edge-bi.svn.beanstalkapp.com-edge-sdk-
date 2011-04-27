@@ -22,6 +22,8 @@ namespace Edge.SDK.ServiceTester
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+
 			// Get an alternate file name
 			string configFileName = EdgeServicesConfiguration.DefaultFileName;
 			if (e.Args.Length > 0 && e.Args[0].StartsWith("/") && e.Args[0].Length > 1)
@@ -61,6 +63,11 @@ namespace Edge.SDK.ServiceTester
 					BindingData.Services.Add(new ServiceDisplayInfo(serviceConfig));
 			}
 
+		}
+
+		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			return Assembly.LoadFrom(Path.Combine(Directory.GetCurrentDirectory(), args.Name + ".dll"));
 		}
 	}
 
