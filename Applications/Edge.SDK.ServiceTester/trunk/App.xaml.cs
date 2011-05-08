@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Windows;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
 using Edge.Core.Configuration;
-using System.ComponentModel;
 using Edge.Core.Services;
-using System.Collections.ObjectModel;
+using Edge.Data.Pipeline;
 
 namespace Edge.SDK.ServiceTester
 {
@@ -19,6 +20,7 @@ namespace Edge.SDK.ServiceTester
 	public partial class App : Application
 	{
 		public static BindingData BindingData = new BindingData();
+		public static DeliveryDBServer DeliveryServer = new DeliveryDBServer();
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -61,9 +63,17 @@ namespace Edge.SDK.ServiceTester
 					BindingData.Services.Add(new ServiceDisplayInfo(serviceConfig));
 			}
 
+			DeliveryServer.Start();
+
 			// Auto start if there is only a single service
 			if (BindingData.Services.Count == 1)
 				BindingData.Services[0].Start();
+		}
+
+		protected override void OnExit(ExitEventArgs e)
+		{
+			base.OnExit(e);
+			DeliveryServer.Stop();
 		}
 	}
 
