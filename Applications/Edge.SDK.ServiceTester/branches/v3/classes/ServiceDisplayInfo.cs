@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Edge.Core.Services;
 using System.ComponentModel;
-using Edge.Core.Configuration;
 using System.Collections.ObjectModel;
+using Edge.Core.Services2;
 
 namespace Edge.SDK.ServiceTester
 {
+	
 	public class ServiceDisplayInfo:INotifyPropertyChanged
 	{
 		#region props
@@ -22,13 +22,13 @@ namespace Edge.SDK.ServiceTester
 			private set;
 		}
 
-		public ServiceElement Configuration
+		public ServiceConfiguration Configuration
 		{
 			get;
 			private set;
 		}
 
-		public long? InstanceID
+		public Guid InstanceID
 		{
 			get;
 			private set;
@@ -55,6 +55,12 @@ namespace Edge.SDK.ServiceTester
 		public double Progress
 		{
 			get { return Instance != null ? Instance.Progress*100 : 0; }
+		}
+
+		public string Output
+		{
+			get;
+			private set;
 		}
 
 		string _customStatus;
@@ -86,11 +92,12 @@ namespace Edge.SDK.ServiceTester
 		#region ctors
 		// ...................
 
-		public ServiceDisplayInfo(ServiceElement configuration, string name = null)
+		public ServiceDisplayInfo(ServiceConfiguration configuration, string name = null)
 		{
 			Configuration = configuration;
-			Name = name ?? Configuration.Name;
+			Name = name ?? Configuration.ServiceName;
 
+			/*
 			Children = new ObservableCollection<ServiceDisplayInfo>();
 			if (Configuration.Workflow != null)
 			{
@@ -102,6 +109,7 @@ namespace Edge.SDK.ServiceTester
 						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step.ActualName));
 				}
 			}
+			*/
 		}
 
 		public ServiceDisplayInfo(string name, string status)
@@ -112,7 +120,7 @@ namespace Edge.SDK.ServiceTester
 
 		public void Start()
 		{
-			Start(Service.CreateInstance(Configuration));
+			Start(App.Environment.CreateServiceInstance(Configuration));
 		}
 
 		// ...................
@@ -139,20 +147,22 @@ namespace Edge.SDK.ServiceTester
 		void AttachToInstance(ServiceInstance instance)
 		{
 			Instance = instance;
-			Instance.StateChanged += new EventHandler<ServiceStateChangedEventArgs>(Instance_StateChanged);
+			Instance.StateChanged += new EventHandler(Instance_StateChanged);
 			Instance.OutcomeReported += new EventHandler(Instance_OutcomeReported);
 			Instance.ProgressReported += new EventHandler(Instance_ProgressReported);
-			Instance.ChildServiceRequested += new EventHandler<ServiceRequestedEventArgs>(Instance_ChildServiceRequested);
+			Instance.OutputGenerated += new EventHandler(Instance_OutputGenerated);
+			//Instance.ChildServiceRequested += new EventHandler(Instance_ChildServiceRequested);
 
 			NotifyPropertyChanged("Status");
 			NotifyPropertyChanged("Progress");
 		}
 
-		void Instance_StateChanged(object sender, ServiceStateChangedEventArgs e)
+
+		void Instance_StateChanged(object sender, EventArgs e)
 		{
 			NotifyPropertyChanged("Status");
 
-			if (e.StateAfter == ServiceState.Ready)
+			if (Instance.State == ServiceState.Ready)
 			{
 				InstanceID = Instance.InstanceID;
 				NotifyPropertyChanged("InstanceID");
@@ -170,6 +180,26 @@ namespace Edge.SDK.ServiceTester
 			NotifyPropertyChanged("Progress");
 		}
 
+		void Instance_OutputGenerated(object sender, EventArgs e)
+		{
+			if (Instance.Output == null)
+				return;
+
+			if (Instance.Output is LogMessage)
+			{
+				var lm = (LogMessage)Instance.Output;
+				if (lm.IsException)
+					this.Output = String.Format("{0} ({1}). {2}", lm.Message, lm.Exception.GetType().Name, lm.Exception.Message);
+				else
+					this.Output = String.Format("{0} - {1}", lm.MessageType, lm.Message);
+			}
+			else
+				this.Output = Instance.Output.ToString();
+
+			NotifyPropertyChanged("Output");
+		}
+
+		/*
 		void Instance_ChildServiceRequested(object sender, ServiceRequestedEventArgs e)
 		{
 			ServiceDisplayInfo step = this.Children.Single(item => item.Name == e.ServiceName);
@@ -184,8 +214,11 @@ namespace Edge.SDK.ServiceTester
 				this.Children.Add(step);
 			}
 		}
+		*/
 
 		// ...................
-		#endregion 
+		#endregion
+		
 	}
+	
 }

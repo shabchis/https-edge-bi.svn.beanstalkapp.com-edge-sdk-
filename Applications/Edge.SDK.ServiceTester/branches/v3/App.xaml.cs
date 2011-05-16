@@ -8,9 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using Edge.Core.Configuration;
-using Edge.Core.Services;
-using Edge.Data.Pipeline;
+using Edge.Core.Services2;
+using System.Threading;
 
 namespace Edge.SDK.ServiceTester
 {
@@ -20,61 +19,24 @@ namespace Edge.SDK.ServiceTester
 	public partial class App : Application
 	{
 		public static BindingData BindingData = new BindingData();
-		public static DeliveryDBServer DeliveryServer = new DeliveryDBServer();
+		public static ServiceEnvironment Environment = new ServiceEnvironment();
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			// Get an alternate file name
-			string configFileName = EdgeServicesConfiguration.DefaultFileName;
-			if (e.Args.Length > 0 && e.Args[0].StartsWith("/") && e.Args[0].Length > 1)
+			ServiceConfiguration config = new ServiceConfiguration()
 			{
-				configFileName = e.Args[0].Substring(1);
-			}
-
-			#if !DEBUG // change to !DEBUG
-			try
-			{
-				EdgeServicesConfiguration.Load(configFileName);
-			}
-			catch (Exception ex)
-			{
-				
-				MessageBox.Show
-				(
-					messageBoxText:	String.Format("Error loading the configuration file {0}\n\n({1}: {2})",
-						Path.Combine(Directory.GetCurrentDirectory(), configFileName),
-						ex.GetType().Name,
-						ex.Message),
-					caption: "Error",
-					button: MessageBoxButton.OK,
-					icon: MessageBoxImage.Error
-				);
-				Shutdown();
-				return;
-			}
-			#else
-			EdgeServicesConfiguration.Load(configFileName);
-			#endif
+				ServiceName = "Testing",
+				ServiceType = "Edge.SDK.ServiceTester.TestService, Edge.SDK.ServiceTester",
+			};
 
 			BindingData.Services = new ObservableCollection<ServiceDisplayInfo>();
-			foreach (ServiceElement serviceConfig in EdgeServicesConfiguration.Current.Services)
-			{
-				if (serviceConfig.IsPublic)
-					BindingData.Services.Add(new ServiceDisplayInfo(serviceConfig));
-			}
-
-			DeliveryServer.Start();
+			BindingData.Services.Add(new ServiceDisplayInfo(config));
 
 			// Auto start if there is only a single service
 			if (BindingData.Services.Count == 1)
 				BindingData.Services[0].Start();
 		}
 
-		protected override void OnExit(ExitEventArgs e)
-		{
-			base.OnExit(e);
-			DeliveryServer.Stop();
-		}
 	}
 
 	public class BindingData
@@ -82,5 +44,20 @@ namespace Edge.SDK.ServiceTester
 		public ObservableCollection<ServiceDisplayInfo> Services { get; set; }
 	}
 
-	
+	public class TestService : Service
+	{
+		protected override ServiceOutcome DoWork()
+		{
+			for (int i = 1; i < 100; i++)
+			{
+				Thread.Sleep(TimeSpan.FromMilliseconds(50));
+				Progress = ((double) i) / 100;
+			}
+
+			throw new InvalidOperationException("Can't do this shit here.");
+
+			return ServiceOutcome.Success;
+		}
+	}
+
 }

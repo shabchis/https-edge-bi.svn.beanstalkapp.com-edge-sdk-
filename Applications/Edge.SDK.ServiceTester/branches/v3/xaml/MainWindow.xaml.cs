@@ -27,11 +27,13 @@ namespace Edge.SDK.ServiceTester
 
 		private void _Toolbar_Start_Click(object sender, RoutedEventArgs e)
 		{
+			/*
 			var service = _Tree.SelectedItem as ServiceDisplayInfo;
 			if (service == null)
 				return;
 
 			service.Start();
+			*/
 		}
 	}
 }

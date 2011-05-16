@@ -97,6 +97,14 @@
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
+
+				<GridViewColumn Header="Output" Width="400">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Output}"/>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+				</GridViewColumn>
 			</ui:TreeListView.Columns>
 		</ui:TreeListView>
 
