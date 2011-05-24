@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Windows;
 using Edge.Core.Services2;
 using System.Threading;
+using WF = Edge.Core.Services2.Workflow;
 
 namespace Edge.SDK.ServiceTester
 {

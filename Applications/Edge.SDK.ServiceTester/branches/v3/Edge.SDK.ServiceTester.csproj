@@ -73,6 +73,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="classes\ServiceDisplayInfo.cs" />
+    <Compile Include="Edge.Services.config.cs" />
     <Compile Include="xaml\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
