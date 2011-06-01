@@ -11,6 +11,8 @@ using System.Windows;
 using Edge.Core.Configuration;
 using Edge.Core.Services;
 using Edge.Data.Pipeline;
+using System.Windows.Controls;
+using System.Text;
 
 namespace Edge.SDK.ServiceTester
 {
@@ -62,12 +64,6 @@ namespace Edge.SDK.ServiceTester
 				if (serviceConfig.IsPublic)
 					BindingData.Services.Add(new ServiceDisplayInfo(serviceConfig));
 			}
-
-			DeliveryServer.Start();
-
-			// Auto start if there is only a single service
-			if (BindingData.Services.Count == 1)
-				BindingData.Services[0].Start();
 		}
 
 		protected override void OnExit(ExitEventArgs e)

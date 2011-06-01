@@ -10,9 +10,9 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
+			<RowDefinition Height="120"/>
+			<RowDefinition Height="2"/>
 			<RowDefinition/>
-			<!--<RowDefinition Height="Auto"/>
-			<RowDefinition/>-->
 		</Grid.RowDefinitions>
 
 		<ToolBarTray Grid.Row="0" IsLocked="True">
@@ -100,12 +100,16 @@
 			</ui:TreeListView.Columns>
 		</ui:TreeListView>
 
-		<!--<GridSplitter Grid.Row="1"
-			VerticalAlignment="Center"
+		<GridSplitter Grid.Row="2"
+			VerticalAlignment="Stretch"
 			HorizontalAlignment="Stretch"
-			Background="Black" 
-			ShowsPreview="False"
-			Height="2"
-			/>-->
+			ShowsPreview="True"
+			Cursor="ScrollNS"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+		/>
+		
+		<TextBox Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="_Console"/>
+
+		
 	</Grid>
 </Window>
