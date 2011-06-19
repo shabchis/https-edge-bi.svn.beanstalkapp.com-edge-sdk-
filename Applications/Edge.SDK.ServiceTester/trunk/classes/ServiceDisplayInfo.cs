@@ -112,7 +112,12 @@ namespace Edge.SDK.ServiceTester
 
 		public void Start()
 		{
-			Start(Service.CreateInstance(Configuration));
+			int accountID;
+			string s = Configuration.Options["AccountID"];
+			if (s == null || !Int32.TryParse(s, out accountID))
+				Start(Service.CreateInstance(Configuration));
+			else
+				Start(Service.CreateInstance(Configuration, accountID));
 		}
 
 		// ...................
