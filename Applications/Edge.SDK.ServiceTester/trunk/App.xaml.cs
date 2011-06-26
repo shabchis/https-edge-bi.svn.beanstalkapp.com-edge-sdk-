@@ -22,7 +22,7 @@ namespace Edge.SDK.ServiceTester
 	public partial class App : Application
 	{
 		public static BindingData BindingData = new BindingData();
-		public static DeliveryDBServer DeliveryServer = new DeliveryDBServer();
+		public static DeliveryDBServer DeliveryServer;
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -69,7 +69,8 @@ namespace Edge.SDK.ServiceTester
 		protected override void OnExit(ExitEventArgs e)
 		{
 			base.OnExit(e);
-			DeliveryServer.Stop();
+			if (DeliveryServer != null)
+				DeliveryServer.Stop();
 		}
 	}
 
