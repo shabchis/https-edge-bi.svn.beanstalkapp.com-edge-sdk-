@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Edge.Core.Configuration;
+using Edge.Data.Pipeline.Configuration;
 
 namespace Edge.SDK.ServiceTester
 {
@@ -35,8 +37,8 @@ namespace Edge.SDK.ServiceTester
 			App.DeliveryServer.Start(new ConsoleWriter() { Textbox = _Console});
 
 			// Auto start if there is only a single service
-			if (App.BindingData.Services.Count == 1)
-				App.BindingData.Services[0].Start();
+			//if (App.BindingData.Services.Count == 1)
+				//App.BindingData.Services[0].Start();
 		}
 
 		private void _Toolbar_Start_Click(object sender, RoutedEventArgs e)
@@ -46,6 +48,22 @@ namespace Edge.SDK.ServiceTester
 				return;
 
 			service.Start();
+		}
+
+		private void _Toolbar_Advanced_Click(object sender, RoutedEventArgs e)
+		{
+			var service = _Tree.SelectedItem as ServiceDisplayInfo;
+			if (service == null)
+				return;
+
+			var dialog = new BatchDialog();
+			dialog.Init(service);
+
+			var result= dialog.ShowDialog();
+			if (result != null && result.Value)
+			{
+
+			}
 		}
 	}
 

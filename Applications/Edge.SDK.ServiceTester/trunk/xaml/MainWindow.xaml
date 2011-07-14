@@ -37,6 +37,12 @@
 						<TextBlock Text="Abort"/>
 					</StackPanel>
 				</Button>
+				
+				<Separator/>
+				
+				<Button x:Name="_Toolbar_Advanced" Click="_Toolbar_Advanced_Click">
+					<TextBlock Text="Advanced..."/>
+				</Button>
 			</ToolBar>
 		</ToolBarTray>
 		

@@ -157,7 +157,7 @@ namespace Edge.SDK.ServiceTester
 		{
 			NotifyPropertyChanged("Status");
 
-			if (e.StateAfter == ServiceState.Ready)
+			if (Instance.State == ServiceState.Ready)
 			{
 				InstanceID = Instance.InstanceID;
 				NotifyPropertyChanged("InstanceID");

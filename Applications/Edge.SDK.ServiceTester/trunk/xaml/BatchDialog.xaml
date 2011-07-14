@@ -1,0 +1,58 @@
+﻿<Window x:Class="Edge.SDK.ServiceTester.BatchDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Name}" Height="300" Width="300"
+		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+>
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition/>
+			<RowDefinition Height="50"/>
+		</Grid.RowDefinitions>
+
+		<ToolBarTray Grid.Row="0" IsLocked="True" HorizontalAlignment="Right">
+			<ToolBarTray.Resources>
+				<Style TargetType="{x:Type Image}">
+					<Setter Property="Margin" Value="0 0 5 0"/>
+				</Style>
+			</ToolBarTray.Resources>
+			<ToolBar HorizontalAlignment="Right">
+				<Button Click="_Toolbar_Add">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\images\add.png" />
+						<TextBlock Text="Add instance"/>
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
+
+		<ListView Grid.Row="1" x:Name="_ListView">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn>
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<Button Click="_Item_Delete">
+									<Image Source="../images/delete.png"/>
+								</Button>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+			<StackPanel.Resources>
+				<Style TargetType="{x:Type Button}">
+					<Setter Property="VerticalAlignment" Value="Center"/>
+					<Setter Property="Padding" Value="5"/>
+					<Setter Property="Margin" Value="0,0,10,0"/>
+				</Style>
+			</StackPanel.Resources>
+			<Button IsCancel="True">Cancel</Button>
+			<Button IsDefault="True" Click="_Run_Click">Run</Button>
+		</StackPanel>
+	</Grid>
+</Window>
