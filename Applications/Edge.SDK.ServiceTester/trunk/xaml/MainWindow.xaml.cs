@@ -22,6 +22,12 @@ namespace Edge.SDK.ServiceTester
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public static MainWindow Current
+		{
+			get;
+			private set;
+		}
+
 		public ConsoleWriter LogWriter
 		{
 			get;
@@ -31,6 +37,7 @@ namespace Edge.SDK.ServiceTester
 		public MainWindow()
 		{
 			InitializeComponent();
+			MainWindow.Current = this;
 			this.DataContext = App.BindingData;
 
 			App.DeliveryServer = new Data.Pipeline.DeliveryDBServer();
@@ -55,14 +62,36 @@ namespace Edge.SDK.ServiceTester
 			var service = _Tree.SelectedItem as ServiceDisplayInfo;
 			if (service == null)
 				return;
+			
+			if (service.Status != null || service.IsDuplicate)
+			{
+				MessageBox.Show(this, "Please select an unstarted service.");
+			}
+
+			// always use the root service
+			service = service.Root;
 
 			var dialog = new BatchDialog();
 			dialog.Init(service);
-
-			var result= dialog.ShowDialog();
+			var result = dialog.ShowDialog();
 			if (result != null && result.Value)
 			{
-
+				int startIndex = App.BindingData.Services.IndexOf(service);
+				int count = 0;
+				foreach(Dictionary<string,string> options in dialog.GetInstanceOptions())
+				{
+					if (count == 0)
+					{
+						service.Start(options);
+					}
+					else
+					{
+						var dup = new ServiceDisplayInfo(service.Configuration) { IsDuplicate = true, IsExpanded = service.IsExpanded };
+						App.BindingData.Services.Insert(startIndex + count, dup);
+						dup.Start(options);
+					}
+					count++;
+				}
 			}
 		}
 	}
@@ -97,7 +126,18 @@ namespace Edge.SDK.ServiceTester
 			get { return Encoding.UTF8; }
 		}
 	}
-	
+
+	public class NameTemplateSelector : DataTemplateSelector
+	{
+		public override DataTemplate SelectTemplate(object item, DependencyObject container)
+		{
+			var service = (ServiceDisplayInfo)item;
+			if (service.Parent == null)
+				return (DataTemplate) MainWindow.Current._Tree.Resources["NameTemplateRoot"];
+			else
+				return (DataTemplate) MainWindow.Current._Tree.Resources["NameTemplateChild"];
+		}
+	}
 
 
 }

@@ -52,9 +52,33 @@ namespace Edge.SDK.ServiceTester
 			private set;
 		}
 
+		public ServiceDisplayInfo Root
+		{
+			get
+			{
+				if (this.Parent == null)
+					return this;
+				else
+					return this.Parent.Root;
+			}
+		}
+
 		public double Progress
 		{
 			get { return Instance != null ? Instance.Progress*100 : 0; }
+		
+		}
+
+		public bool IsDuplicate
+		{
+			get;
+			internal set;
+		}
+
+		public bool IsExpanded
+		{
+			get;
+			set;
 		}
 
 		string _customStatus;
@@ -66,7 +90,7 @@ namespace Edge.SDK.ServiceTester
 				if (_customStatus != null)
 					return _customStatus;
 				else if (Instance == null)
-					return string.Empty;
+					return null;
 				else
 					return Instance.State == ServiceState.Ended ?
 						Instance.Outcome.ToString() :
@@ -97,27 +121,36 @@ namespace Edge.SDK.ServiceTester
 				foreach (WorkflowStepElement step in Configuration.Workflow)
 				{
 					if (step.BaseConfiguration.Element == null)
-						Children.Add(new ServiceDisplayInfo(step.ActualName, "(undefined base)"));
+						Children.Add(new ServiceDisplayInfo(step.ActualName, "(undefined base)") {  Parent = this });
 					else
-						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step.ActualName));
+						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step.ActualName) { Parent = this });
 				}
 			}
+			IsExpanded = true;
 		}
 
 		public ServiceDisplayInfo(string name, string status)
 		{
 			Name = name;
 			_customStatus = status;
+			IsExpanded = true;
 		}
 
-		public void Start()
+		public void Start(Dictionary<string,string> options = null)
 		{
 			int accountID;
 			string s = Configuration.Options["AccountID"];
+			ServiceElement configuration = options == null ?
+				this.Configuration :
+				new ActiveServiceElement(this.Configuration);
+
+			if (options != null)
+				configuration.Options.Merge(options);
+
 			if (s == null || !Int32.TryParse(s, out accountID))
-				Start(Service.CreateInstance(Configuration));
+				Start(Service.CreateInstance(configuration));
 			else
-				Start(Service.CreateInstance(Configuration, accountID));
+				Start(Service.CreateInstance(configuration, accountID));
 		}
 
 		// ...................

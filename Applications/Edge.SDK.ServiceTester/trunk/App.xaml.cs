@@ -55,7 +55,7 @@ namespace Edge.SDK.ServiceTester
 				return;
 			}
 			#else
-			EdgeServicesConfiguration.Load(configFileName);
+			EdgeServicesConfiguration.Load(configFileName, readOnly: false);
 			#endif
 
 			BindingData.Services = new ObservableCollection<ServiceDisplayInfo>();

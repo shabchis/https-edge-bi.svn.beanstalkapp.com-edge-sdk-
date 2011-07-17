@@ -22,8 +22,9 @@ namespace Edge.SDK.ServiceTester
 	public partial class BatchDialog : Window
 	{
 		private List<string> _optionsHeaders;
+		private ObservableCollection<List<BatchInstanceOption>> _instances;
 
-		public ObservableCollection<List<BatchInstanceOption>> Instances { get; private set; }
+		public ServiceDisplayInfo CurrentService { get; private set; }
 
 		public BatchDialog()
 		{
@@ -32,7 +33,10 @@ namespace Edge.SDK.ServiceTester
 
 		public void Init(ServiceDisplayInfo service)
 		{
-			this.DataContext = service;
+			if (this.CurrentService == service)
+				return;
+
+			this.DataContext = this.CurrentService = service;
 
 			_optionsHeaders = new List<string>();
 			var options = service.Configuration.Extensions[OptionDefinitionCollection.ExtensionName] as OptionDefinitionCollection;
@@ -61,14 +65,14 @@ namespace Edge.SDK.ServiceTester
 				});
 			};
 
-			this.Instances = AppData.Load<ObservableCollection<List<BatchInstanceOption>>>(service.Name);
-			if (this.Instances == null)
+			this._instances = AppData.Load<ObservableCollection<List<BatchInstanceOption>>>(service.Name);
+			if (this._instances == null)
 			{
-				this.Instances = new ObservableCollection<List<BatchInstanceOption>>();
-				this.Instances.Add(NewInstance());
+				this._instances = new ObservableCollection<List<BatchInstanceOption>>();
+				this._instances.Add(NewInstance());
 			}
 
-			_ListView.ItemsSource = this.Instances; 
+			_ListView.ItemsSource = this._instances; 
 		}
 
 
@@ -109,6 +113,17 @@ namespace Edge.SDK.ServiceTester
 			AppData.Save(((ServiceDisplayInfo)this.DataContext).Name, instances);
 
 			this.DialogResult = true;
+		}
+
+		public IEnumerable<Dictionary<string, string>> GetInstanceOptions()
+		{
+			foreach (List<BatchInstanceOption> optionBag in this._instances)
+			{
+				var vals = new Dictionary<string, string>();
+				foreach (BatchInstanceOption option in optionBag)
+					vals.Add(option.Option, option.Value);
+				yield return vals;
+			}
 		}
 
 	}
