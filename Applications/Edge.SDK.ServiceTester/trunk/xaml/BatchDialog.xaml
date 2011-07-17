@@ -28,6 +28,11 @@
 		</ToolBarTray>
 
 		<ListView Grid.Row="1" x:Name="_ListView">
+			<ListView.Resources>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+				</Style>
+			</ListView.Resources>
 			<ListView.View>
 				<GridView>
 					<GridViewColumn>

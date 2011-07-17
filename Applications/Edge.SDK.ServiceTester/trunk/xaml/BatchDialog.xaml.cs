@@ -53,9 +53,10 @@ namespace Edge.SDK.ServiceTester
 			{
 				string option = _optionsHeaders[i];
 				DataTemplate cellTemplate = new DataTemplate();
-				cellTemplate.VisualTree = new FrameworkElementFactory(typeof(TextBox));
-				cellTemplate.VisualTree.SetBinding(TextBox.TextProperty, new Binding(String.Format("[{0}].Value", i)));
-				cellTemplate.VisualTree.SetValue(TextBox.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+				cellTemplate.VisualTree = new FrameworkElementFactory(typeof(Grid));
+				var textbox = new FrameworkElementFactory(typeof(TextBox));
+				textbox.SetBinding(TextBox.TextProperty, new Binding(String.Format("[{0}].Value", i)));
+				cellTemplate.VisualTree.AppendChild(textbox);
 
 				grid.Columns.Add(new GridViewColumn()
 				{

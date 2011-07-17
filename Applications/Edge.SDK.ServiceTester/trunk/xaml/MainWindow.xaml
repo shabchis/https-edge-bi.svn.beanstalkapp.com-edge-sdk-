@@ -84,7 +84,7 @@
 
 				<DataTemplate x:Key="NameTemplateChild">
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-						<CheckBox IsChecked="{Binding Path=Configuration.IsEnabled}" Margin="0,0,5,0" VerticalAlignment="Center">
+						<CheckBox IsChecked="{Binding Path=IsEnabled}" Margin="0,0,5,0" VerticalAlignment="Center">
 							<CheckBox.Style>
 								<Style TargetType="{x:Type CheckBox}">
 									<Setter Property="IsEnabled" Value="False"/>

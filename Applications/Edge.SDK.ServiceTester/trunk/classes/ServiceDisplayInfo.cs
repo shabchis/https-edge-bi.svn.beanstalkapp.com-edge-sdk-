@@ -81,6 +81,15 @@ namespace Edge.SDK.ServiceTester
 			set;
 		}
 
+
+		WorkflowStepElement _step = null;
+
+		public bool IsEnabled
+		{
+			get { return _step == null ? true : _step.IsEnabled; }
+			set { _step.IsEnabled = value; }
+		}
+
 		string _customStatus;
 
 		public string Status
@@ -123,10 +132,15 @@ namespace Edge.SDK.ServiceTester
 					if (step.BaseConfiguration.Element == null)
 						Children.Add(new ServiceDisplayInfo(step.ActualName, "(undefined base)") {  Parent = this });
 					else
-						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step.ActualName) { Parent = this });
+						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step) { Parent = this });
 				}
 			}
 			IsExpanded = true;
+		}
+
+		public ServiceDisplayInfo(ServiceElement configuration, WorkflowStepElement step):this(configuration, step.Name)
+		{
+			_step = step;
 		}
 
 		public ServiceDisplayInfo(string name, string status)

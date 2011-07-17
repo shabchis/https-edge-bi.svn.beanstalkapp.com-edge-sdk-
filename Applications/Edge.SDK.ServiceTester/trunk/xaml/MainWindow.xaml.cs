@@ -62,11 +62,6 @@ namespace Edge.SDK.ServiceTester
 			var service = _Tree.SelectedItem as ServiceDisplayInfo;
 			if (service == null)
 				return;
-			
-			if (service.Status != null || service.IsDuplicate)
-			{
-				MessageBox.Show(this, "Please select an unstarted service.");
-			}
 
 			// always use the root service
 			service = service.Root;
@@ -80,17 +75,9 @@ namespace Edge.SDK.ServiceTester
 				int count = 0;
 				foreach(Dictionary<string,string> options in dialog.GetInstanceOptions())
 				{
-					if (count == 0)
-					{
-						service.Start(options);
-					}
-					else
-					{
-						var dup = new ServiceDisplayInfo(service.Configuration) { IsDuplicate = true, IsExpanded = service.IsExpanded };
-						App.BindingData.Services.Insert(startIndex + count, dup);
-						dup.Start(options);
-					}
-					count++;
+					var dup = new ServiceDisplayInfo(service.Configuration) { IsDuplicate = true, IsExpanded = service.IsExpanded };
+					App.BindingData.Services.Insert(startIndex + (++count), dup);
+					dup.Start(options);
 				}
 			}
 		}
