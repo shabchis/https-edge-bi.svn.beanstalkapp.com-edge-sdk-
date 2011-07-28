@@ -1,0 +1,313 @@
+﻿<Window x:Class="Edge.SDK.ServiceTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:this="clr-namespace:Edge.SDK.ServiceTester"
+		xmlns:ui="http://schemas.aspitalia.com/Ricciolo/Controls"
+		xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+		Icon="..\images\App.ico"
+        Title="Edge Service Tester"
+		Height="480"
+		Width="640">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="22"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition/>
+			<RowDefinition Height="2"/>
+			<RowDefinition Height="80"/>
+		</Grid.RowDefinitions>
+		
+		<Menu Grid.Row="0">
+			<MenuItem Header="_File"/>
+			<MenuItem Header="_Edit"/>
+			<MenuItem Header="_View"/>
+			<MenuItem Header="_Help"/>
+		</Menu>
+
+		<ToolBarTray Grid.Row="1" IsLocked="True">
+			<ToolBarTray.Resources>
+				<Style TargetType="{x:Type Button}" x:Key="treeActionButton">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding ElementName=_Tree, Path=SelectedItem}" Value="{x:Null}">
+							<Setter Property="IsEnabled" Value="False"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+				<Style TargetType="{x:Type Image}">
+					<Setter Property="Margin" Value="0 0 5 0"/>
+				</Style>
+			</ToolBarTray.Resources>
+			<ToolBar>
+				<!-- Start button -->
+				<Button x:Name="_Toolbar_Start" Click="_Toolbar_Start_Click" Style="{StaticResource treeActionButton}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\images\control_play_blue.png" />
+						<TextBlock Text="Start"/>
+					</StackPanel>
+				</Button>
+
+				<!-- Abort button -->
+				<Button Style="{StaticResource treeActionButton}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\images\control_stop.png" />
+						<TextBlock Text="Abort"/>
+					</StackPanel>
+				</Button>
+
+				<Separator/>
+
+				<Button x:Name="_Toolbar_Advanced" Click="_Toolbar_Advanced_Click"  Style="{StaticResource treeActionButton}">
+					<TextBlock Text="Run with options..."/>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
+
+		<TabControl Grid.Row="2">
+			<TabItem Header="Services" >
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<ui:TreeListView x:Name="_Tree" ItemsSource="{Binding Services}" Grid.Row="0">
+						<TreeView.Resources>
+							<HierarchicalDataTemplate DataType="{x:Type this:DisplayNode}" ItemsSource="{Binding Children}"/>
+
+							<Style TargetType="{x:Type ui:TreeListViewItem}">
+								<Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"/>
+								<!--Value="{Binding RelativeSource={RelativeSource Self}, Path=Header.IsWorkflow, Mode=TwoWay}"/>-->
+							</Style>
+
+							<this:NameTemplateSelector x:Key="NameTemplateSelector"/>
+
+							<DataTemplate x:Key="NameTemplateRoot">
+								<DockPanel>
+									<TextBlock Text="{Binding Name}">
+							<TextBlock.Style>
+								<Style TargetType="{x:Type TextBlock}">
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding IsDuplicate}" Value="True">
+											<Setter Property="Foreground" Value="#999"/>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBlock.Style>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+
+							<DataTemplate x:Key="NameTemplateChild">
+								<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+									<CheckBox IsChecked="{Binding Path=IsEnabled}" Margin="0,0,5,0" VerticalAlignment="Center">
+										<CheckBox.Style>
+											<Style TargetType="{x:Type CheckBox}">
+												<Setter Property="IsEnabled" Value="False"/>
+												<Style.Triggers>
+													<MultiDataTrigger>
+														<MultiDataTrigger.Conditions>
+															<Condition Binding="{Binding Path=Root.Status}" Value="{x:Null}"/>
+															<Condition Binding="{Binding Path=Root.IsDuplicate}" Value="False"/>
+														</MultiDataTrigger.Conditions>
+														<Setter Property="IsEnabled" Value="True"/>
+													</MultiDataTrigger>
+												</Style.Triggers>
+											</Style>
+										</CheckBox.Style>
+									</CheckBox>
+									<TextBlock Text="{Binding Name}"/>
+								</StackPanel>
+							</DataTemplate>
+
+						</TreeView.Resources>
+
+						<ui:TreeListView.Columns>
+							<!-- Service column -->
+							<GridViewColumn Header="Service" Width="200" CellTemplateSelector="{StaticResource NameTemplateSelector}"/>
+							
+							<!-- InstanceID column -->
+							<GridViewColumn Header="Instance ID" Width="80">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding InstanceID}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+							<!-- Status column -->
+							<GridViewColumn Header="Status" Width="120">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Status}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+							<!-- Progress column -->
+							<GridViewColumn Header="Progress" Width="200">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Grid>
+											<Grid.Style>
+												<Style TargetType="{x:Type Grid}">
+													<Style.Triggers>
+														<DataTrigger Binding="{Binding Status}" Value="{x:Null}">
+															<Setter Property="Visibility" Value="Collapsed"/>
+														</DataTrigger>
+													</Style.Triggers>
+												</Style>
+											</Grid.Style>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*"/>
+												<ColumnDefinition Width="30"/>
+											</Grid.ColumnDefinitions>
+											<ProgressBar Maximum="100" Value="{Binding Path=Progress, Mode=OneWay}" Margin="0 0 5 0" VerticalAlignment="Stretch" Grid.Column="0" />
+											<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+												<TextBlock Text="{Binding Progress}"/>
+												<TextBlock Text="%"/>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+						</ui:TreeListView.Columns>
+					</ui:TreeListView>
+				</Grid>
+			</TabItem>
+			<TabItem Header="Schedule" >
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<ui:TreeListView x:Name="_ScheduleTree" ItemsSource="{Binding Services}" Grid.Row="0">
+						<TreeView.Resources>
+							<HierarchicalDataTemplate DataType="{x:Type this:DisplayNode}" ItemsSource="{Binding Children}"/>
+
+							<Style TargetType="{x:Type ui:TreeListViewItem}">
+								<Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}"/>
+								<!--Value="{Binding RelativeSource={RelativeSource Self}, Path=Header.IsWorkflow, Mode=TwoWay}"/>-->
+							</Style>
+
+							<this:NameTemplateSelector x:Key="NameTemplateSelector"/>
+
+							<DataTemplate x:Key="NameTemplateRoot">
+								<DockPanel>
+									<TextBlock Text="{Binding Name}">
+							<TextBlock.Style>
+								<Style TargetType="{x:Type TextBlock}">
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding IsDuplicate}" Value="True">
+											<Setter Property="Foreground" Value="#999"/>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBlock.Style>
+									</TextBlock>
+								</DockPanel>
+							</DataTemplate>
+
+							<DataTemplate x:Key="NameTemplateChild">
+								<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+									<TextBlock Text="{Binding Name}"/>
+								</StackPanel>
+							</DataTemplate>
+
+						</TreeView.Resources>
+
+						<ui:TreeListView.Columns>
+							<!-- Service column -->
+							<GridViewColumn Header="Service" Width="200" CellTemplateSelector="{StaticResource NameTemplateSelector}"/>
+
+							<!-- Account column -->
+							<GridViewColumn Header="Account" Width="120"/>
+
+							<!-- InstanceID column -->
+							<GridViewColumn Header="Instance ID" Width="80">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding InstanceID}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+							<!-- Status column -->
+							<GridViewColumn Header="Status" Width="120">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Status}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+							<!-- Progress column -->
+							<GridViewColumn Header="Progress" Width="200">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Grid>
+											<Grid.Style>
+												<Style TargetType="{x:Type Grid}">
+													<Style.Triggers>
+														<DataTrigger Binding="{Binding Status}" Value="{x:Null}">
+															<Setter Property="Visibility" Value="Collapsed"/>
+														</DataTrigger>
+													</Style.Triggers>
+												</Style>
+											</Grid.Style>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*"/>
+												<ColumnDefinition Width="30"/>
+											</Grid.ColumnDefinitions>
+											<ProgressBar Maximum="100" Value="{Binding Path=Progress, Mode=OneWay}" Margin="0 0 5 0" VerticalAlignment="Stretch" Grid.Column="0" />
+											<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+												<TextBlock Text="{Binding Progress}"/>
+												<TextBlock Text="%"/>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+							<GridViewColumn Header="TimeScheduled" Width="120">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding TimeScheduled}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+							<GridViewColumn Header="TimeStarted" Width="120">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding TimeStarted}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+							<GridViewColumn Header="TimeEnded" Width="120">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding TimeEnded}"/>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+
+						</ui:TreeListView.Columns>
+					</ui:TreeListView>
+				</Grid>
+			</TabItem>
+		</TabControl>
+
+
+
+		<GridSplitter Grid.Row="3"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch"
+			ShowsPreview="True"
+			Cursor="ScrollNS"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+		/>
+		
+		<TextBox Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="_Console"/>
+
+		
+	</Grid>
+</Window>
