@@ -22,10 +22,11 @@ namespace Edge.SDK.ServiceTester
 	public partial class App : Application
 	{
 		public static BindingData BindingData = new BindingData();
-		public static DeliveryDBServer DeliveryServer;
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+
 			// Get an alternate file name
 			string configFileName = EdgeServicesConfiguration.DefaultFileName;
 			if (e.Args.Length > 0 && e.Args[0].StartsWith("/") && e.Args[0].Length > 1)
@@ -66,11 +67,11 @@ namespace Edge.SDK.ServiceTester
 			}
 		}
 
-		protected override void OnExit(ExitEventArgs e)
+		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
-			base.OnExit(e);
-			if (DeliveryServer != null)
-				DeliveryServer.Stop();
+			string path = Path.Combine(Environment.CurrentDirectory, args.Name + ".dll");
+			try { return Assembly.LoadFrom(path); }
+			catch { return null; }
 		}
 	}
 

@@ -40,9 +40,6 @@ namespace Edge.SDK.ServiceTester
 			MainWindow.Current = this;
 			this.DataContext = App.BindingData;
 
-			App.DeliveryServer = new Data.Pipeline.DeliveryDBServer();
-			App.DeliveryServer.Start(new ConsoleWriter() { Textbox = _Console});
-
 			// Auto start if there is only a single service
 			//if (App.BindingData.Services.Count == 1)
 				//App.BindingData.Services[0].Start();
