@@ -47,9 +47,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\edge-framework\Edge.Core\branches\3.5.0\Edge.Core.future.csproj">
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj">
       <Project>{76F5133E-50CD-4282-97E0-B431FACB3ACC}</Project>
-      <Name>Edge.Core.future</Name>
+      <Name>Edge.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
