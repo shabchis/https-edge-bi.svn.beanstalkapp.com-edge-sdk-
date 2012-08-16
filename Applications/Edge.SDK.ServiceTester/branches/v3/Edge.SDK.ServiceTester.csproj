@@ -117,12 +117,6 @@
   <ItemGroup>
     <Resource Include="images\App.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Framework\Edge.Core.v3\Edge.Core.csproj">
-      <Project>{6919B522-1150-4F38-8DEB-6AEA7638CADB}</Project>
-      <Name>Edge.Core %28v3\Edge.Core%29</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
