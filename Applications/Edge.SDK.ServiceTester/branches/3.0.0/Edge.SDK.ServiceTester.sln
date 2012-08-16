@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.SDK.ServiceTester", "Edge.SDK.ServiceTester.csproj", "{E3336A2E-6404-4457-872E-A103FEBD1E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core.future", "..\..\..\..\..\edge-framework\Edge.Core\branches\3.5.0\Edge.Core.future.csproj", "{76F5133E-50CD-4282-97E0-B431FACB3ACC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Data.Pipeline", "..\..\..\..\..\edge-framework\Edge.Data.Pipeline\trunk\Edge.Data.Pipeline.csproj", "{53391A99-E8CA-4262-A8E0-5F05A1CC6608}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core.future", "..\..\..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj", "{76F5133E-50CD-4282-97E0-B431FACB3ACC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.SDK.TestHost", "..\..\..\Edge.SDK.TestHost\Edge.SDK.TestHost.csproj", "{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}"
 EndProject
