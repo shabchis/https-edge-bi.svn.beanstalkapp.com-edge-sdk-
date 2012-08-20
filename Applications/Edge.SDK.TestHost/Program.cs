@@ -36,7 +36,7 @@ namespace Edge.SDK.TestHost
 
 			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
 
-			ServiceInstance instance = env.NewService(profileService);
+			ServiceInstance instance = env.NewServiceInstance(profileService);
 			instance.StateChanged += new EventHandler(instance_StateChanged);
 			instance.ProgressReported += new EventHandler(instance_ProgressReported);
 			instance.OutcomeReported += new EventHandler(instance_OutcomeReported);
