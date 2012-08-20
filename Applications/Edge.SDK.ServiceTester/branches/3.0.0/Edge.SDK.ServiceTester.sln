@@ -3,12 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.SDK.ServiceTester", "Edge.SDK.ServiceTester.csproj", "{E3336A2E-6404-4457-872E-A103FEBD1E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core.future", "..\..\..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj", "{76F5133E-50CD-4282-97E0-B431FACB3ACC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core", "..\..\..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj", "{76F5133E-50CD-4282-97E0-B431FACB3ACC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.SDK.TestHost", "..\..\..\Edge.SDK.TestHost\Edge.SDK.TestHost.csproj", "{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Applications.PM.SchedulerControl", "..\..\..\..\..\utilities\SchedulerControl2.9.9\trunk\Edge.Applications.PM.SchedulerControl.csproj", "{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Processes.SchedulingHost", "..\..\..\..\..\edge-processes\Edge.Processes.SchedulingHost\trunk\Edge.Processes.SchedulingHost.csproj", "{F392CC5C-789E-4411-BFC2-8E590ED290B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebubNewScheduling|Any CPU = DebubNewScheduling|Any CPU
+		DebubNewScheduling|Mixed Platforms = DebubNewScheduling|Mixed Platforms
+		DebubNewScheduling|x86 = DebubNewScheduling|x86
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
@@ -17,9 +24,11 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3336A2E-6404-4457-872E-A103FEBD1E18}.DebubNewScheduling|Any CPU.ActiveCfg = Debug|x86
+		{E3336A2E-6404-4457-872E-A103FEBD1E18}.DebubNewScheduling|Mixed Platforms.ActiveCfg = Debug|x86
+		{E3336A2E-6404-4457-872E-A103FEBD1E18}.DebubNewScheduling|x86.ActiveCfg = Debug|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Debug|x86.ActiveCfg = Debug|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Debug|x86.Build.0 = Debug|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Release|Any CPU.ActiveCfg = Release|x86
@@ -27,6 +36,11 @@ Global
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Release|x86.ActiveCfg = Release|x86
 		{E3336A2E-6404-4457-872E-A103FEBD1E18}.Release|x86.Build.0 = Release|x86
+		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.DebubNewScheduling|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.DebubNewScheduling|Any CPU.Build.0 = Debug|Any CPU
+		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.DebubNewScheduling|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.DebubNewScheduling|Mixed Platforms.Build.0 = Debug|Any CPU
+		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.DebubNewScheduling|x86.ActiveCfg = Debug|Any CPU
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -37,16 +51,9 @@ Global
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{76F5133E-50CD-4282-97E0-B431FACB3ACC}.Release|x86.ActiveCfg = Release|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{53391A99-E8CA-4262-A8E0-5F05A1CC6608}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.DebubNewScheduling|Any CPU.ActiveCfg = Debug|x86
+		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.DebubNewScheduling|Mixed Platforms.ActiveCfg = Debug|x86
+		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.DebubNewScheduling|x86.ActiveCfg = Debug|x86
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -57,6 +64,39 @@ Global
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Release|Mixed Platforms.Build.0 = Release|x86
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Release|x86.ActiveCfg = Release|x86
 		{BC56CE2C-4C01-4DC8-8707-9393ED301A6B}.Release|x86.Build.0 = Release|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.DebubNewScheduling|Any CPU.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.DebubNewScheduling|Mixed Platforms.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.DebubNewScheduling|Mixed Platforms.Build.0 = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.DebubNewScheduling|x86.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.DebubNewScheduling|x86.Build.0 = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Debug|x86.ActiveCfg = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Debug|x86.Build.0 = Debug|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Release|Any CPU.ActiveCfg = Release|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Release|x86.ActiveCfg = Release|x86
+		{8AC78599-AD3B-46BE-86CC-F51A474AFA3C}.Release|x86.Build.0 = Release|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|Any CPU.ActiveCfg = DebubNewScheduling|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|Any CPU.Build.0 = DebubNewScheduling|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|Mixed Platforms.ActiveCfg = DebubNewScheduling|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|Mixed Platforms.Build.0 = DebubNewScheduling|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|x86.ActiveCfg = DebubNewScheduling|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.DebubNewScheduling|x86.Build.0 = DebubNewScheduling|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|x86.ActiveCfg = Debug|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Debug|x86.Build.0 = Debug|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|x86.ActiveCfg = Release|x86
+		{F392CC5C-789E-4411-BFC2-8E590ED290B5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
