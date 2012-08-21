@@ -81,9 +81,9 @@ namespace Edge.SDK.TestHost
 
 		static void instance_OutputGenerated(object sender, EventArgs e)
 		{
-			Console.WriteLine("--------------------------------------------");
-			Console.WriteLine("output: " + ((ServiceInstance)sender).Output.ToString());
-			Console.WriteLine("--------------------------------------------");
+			//Console.WriteLine("--------------------------------------------");
+			Console.WriteLine("---------------> output: " + ((LogMessage)((ServiceInstance)sender).Output).Message); //((ServiceInstance)sender).Output.ToString());
+			//Console.WriteLine("--------------------------------------------");
 		}
 
 		static void instance_OutcomeReported(object sender, EventArgs e)
