@@ -16,7 +16,8 @@ namespace Edge.SDK.TestHost
 			// ..........................................................
 			// STEP 1 - host
 
-			var env = new ServiceEnvironment();
+			//var env = new ServiceEnvironment();
+			var host = new ServiceExecutionHost();
 
 			// ..........................................................
 			// STEP 2 - service
@@ -36,14 +37,17 @@ namespace Edge.SDK.TestHost
 
 			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
 
-			ServiceInstance instance = env.NewServiceInstance(profileService);
-			instance.StateChanged += new EventHandler(instance_StateChanged);
-			instance.ProgressReported += new EventHandler(instance_ProgressReported);
-			instance.OutcomeReported += new EventHandler(instance_OutcomeReported);
-			instance.OutputGenerated += new EventHandler(instance_OutputGenerated);
-			instance.Start();
+			while (Console.ReadLine() != "exit")
+			{
+				ServiceInstance instance = host.Environment.NewServiceInstance(profileService);
+				instance.StateChanged += new EventHandler(instance_StateChanged);
+				instance.ProgressReported += new EventHandler(instance_ProgressReported);
+				instance.OutcomeReported += new EventHandler(instance_OutcomeReported);
+				instance.OutputGenerated += new EventHandler(instance_OutputGenerated);
+				instance.Start();
+			}
 
-
+			/*
 			ServiceConfiguration retrieverConfig = new ServiceConfiguration()
 			{
 				ServiceName = "FacebookRetrieverService",
@@ -60,9 +64,9 @@ namespace Edge.SDK.TestHost
 			//		new Step() { Name = "Retriever", ServiceConfiguration =  }
 				}
 			};
+			*/
 
-
-			Console.ReadLine();
+			
 		}
 
 		static void instance_StateChanged(object sender, EventArgs e)
@@ -101,7 +105,10 @@ namespace Edge.SDK.TestHost
 				Progress = ((double)i) / 10;
 			}
 
-			throw new InvalidOperationException("Can't do this shit here.");
+			var inst = Environment.NewServiceInstance(this.Configuration);
+			inst.Start();
+
+			//throw new InvalidOperationException("Can't do this shit here.");
 
 			return ServiceOutcome.Success;
 		}
