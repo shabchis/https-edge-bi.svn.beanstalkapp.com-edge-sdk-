@@ -28,15 +28,17 @@ namespace Edge.SDK.TestHost
 				ServiceName = "TestService",
 				ServiceClass = typeof(TestService).AssemblyQualifiedName
 			};
+			
 			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration();
-			workflowConfig.Workflow = new Group()
+			workflowConfig.Workflow = new WorkflowNodeGroup()
 			{
-				Mode = GroupMode.Linear,
+				Mode = WorkflowNodeGroupMode.Linear,
 				Nodes = new LockableList<WorkflowNode>()
 				{
 					//		new Step() { Name = "Retriever", ServiceConfiguration =  }
 				}
 			};
+			
 
 			var profile = new ServiceProfile()
 			{
@@ -44,7 +46,7 @@ namespace Edge.SDK.TestHost
 			};
 			profile.Parameters["AccountID"] = 10035;
 
-			ServiceConfiguration profileService = profile.DeriveConfiguration(workflowConfig);
+			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
 
 			do
 			{
@@ -76,7 +78,7 @@ namespace Edge.SDK.TestHost
 
 		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
-			Console.WriteLine("--------------->" + e.Output.ToString());
+			Console.WriteLine("     --> " + e.Output.ToString());
 		}
 
 	}
@@ -89,7 +91,7 @@ namespace Edge.SDK.TestHost
 			{
 				Thread.Sleep(TimeSpan.FromMilliseconds(50));
 				Progress = ((double)i) / 10;
-				this.GenerateOutput(i);
+				this.GenerateOutput("Hi number + " + i.ToString());
 			}
 
 			// no permission for this
