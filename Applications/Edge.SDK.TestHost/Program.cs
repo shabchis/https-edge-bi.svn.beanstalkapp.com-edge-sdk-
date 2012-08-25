@@ -26,7 +26,7 @@ namespace Edge.SDK.TestHost
 			{
 				IsEnabled = true,
 				ServiceName = "TestService",
-				ServiceType = typeof(TestService).AssemblyQualifiedName
+				ServiceClass = typeof(TestService).AssemblyQualifiedName
 			};
 
 			var profile = new ServiceProfile()
@@ -37,15 +37,13 @@ namespace Edge.SDK.TestHost
 
 			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
 
-			while (Console.ReadLine() != "exit")
+			do
 			{
 				ServiceInstance instance = host.Environment.NewServiceInstance(profileService);
 				instance.StateChanged += new EventHandler(instance_StateChanged);
-				instance.ProgressReported += new EventHandler(instance_ProgressReported);
-				instance.OutcomeReported += new EventHandler(instance_OutcomeReported);
-				instance.OutputGenerated += new EventHandler(instance_OutputGenerated);
+				instance.OutputGenerated += new EventHandler<ServiceOutputEventArgs>(instance_OutputGenerated);
 				instance.Start();
-			}
+			} while (Console.ReadLine() != "exit");
 
 			/*
 			ServiceConfiguration retrieverConfig = new ServiceConfiguration()
@@ -71,26 +69,14 @@ namespace Edge.SDK.TestHost
 
 		static void instance_StateChanged(object sender, EventArgs e)
 		{
-			Console.WriteLine("state: " + ((ServiceInstance)sender).State.ToString());
+			var instance = (ServiceInstance) sender;
+			Console.WriteLine("{3} -- state: {0}, progress: {1}, outcome: {2}", instance.State, instance.Progress, instance.Outcome, instance.InstanceID.ToString("N").Substring(0,4));
 		}
 
-		static void instance_ProgressReported(object sender, EventArgs e)
-		{
-			Console.WriteLine("progress: " + ((ServiceInstance)sender).Progress.ToString());
-		}
 
-		static void instance_OutputGenerated(object sender, EventArgs e)
+		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
-			//Console.WriteLine("--------------------------------------------");
-			Console.WriteLine("---------------> output: " + ((LogMessage)((ServiceInstance)sender).Output).Message); //((ServiceInstance)sender).Output.ToString());
-			//Console.WriteLine("--------------------------------------------");
-		}
-
-		static void instance_OutcomeReported(object sender, EventArgs e)
-		{
-			
-			Console.WriteLine("outcome: " + ((ServiceInstance)sender).Outcome.ToString());
-			
+			Console.WriteLine("--------------->" + e.Output.ToString());
 		}
 
 	}
@@ -102,13 +88,14 @@ namespace Edge.SDK.TestHost
 			for (int i = 1; i < 10; i++)
 			{
 				Thread.Sleep(TimeSpan.FromMilliseconds(50));
-				Progress = ((double)i) / 10;
+				//Progress = ((double)i) / 10;
+				this.GenerateOutput(i);
 			}
 
-			var inst = Environment.NewServiceInstance(this.Configuration);
-			inst.Start();
+			//var inst = Environment.NewServiceInstance(this.Configuration);
+			//inst.Start();
 
-			//throw new InvalidOperationException("Can't do this shit here.");
+			throw new InvalidOperationException("Can't do this shit here.");
 
 			return ServiceOutcome.Success;
 		}
