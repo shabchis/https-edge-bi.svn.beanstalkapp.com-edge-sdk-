@@ -39,9 +39,8 @@
     <ApplicationIcon>images\App.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ricciolo.Controls.TreeListView, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ffedd4b1334b06f5, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\(third party)\WPF\Ricciolo.Controls.TreeListView\lib\Ricciolo.Controls.TreeListView.dll</HintPath>
+    <Reference Include="Ricciolo.Controls.TreeListView">
+      <HintPath>..\..\..\..\..\thirdparty\WPF\Ricciolo.Controls.TreeListView\lib\Ricciolo.Controls.TreeListView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -116,6 +115,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\App.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj">
+      <Project>{76F5133E-50CD-4282-97E0-B431FACB3ACC}</Project>
+      <Name>Edge.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

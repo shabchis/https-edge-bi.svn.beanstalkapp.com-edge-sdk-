@@ -28,6 +28,15 @@ namespace Edge.SDK.TestHost
 				ServiceName = "TestService",
 				ServiceClass = typeof(TestService).AssemblyQualifiedName
 			};
+			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration();
+			workflowConfig.Workflow = new Group()
+			{
+				Mode = GroupMode.Linear,
+				Nodes = new LockableList<WorkflowNode>()
+				{
+					//		new Step() { Name = "Retriever", ServiceConfiguration =  }
+				}
+			};
 
 			var profile = new ServiceProfile()
 			{
@@ -35,7 +44,7 @@ namespace Edge.SDK.TestHost
 			};
 			profile.Parameters["AccountID"] = 10035;
 
-			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
+			ServiceConfiguration profileService = profile.DeriveConfiguration(workflowConfig);
 
 			do
 			{
@@ -51,18 +60,9 @@ namespace Edge.SDK.TestHost
 				ServiceName = "FacebookRetrieverService",
 			};
 			retrieverConfig.Parameters["FacebookToken"] = 123;
-
-			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration();
-
-			workflowConfig.Workflow = new Group()
-			{
-				Mode = GroupMode.Linear,
-				Nodes = new List<WorkflowNode>()
-				{
-			//		new Step() { Name = "Retriever", ServiceConfiguration =  }
-				}
-			};
 			*/
+			
+			
 
 			
 		}
@@ -88,14 +88,15 @@ namespace Edge.SDK.TestHost
 			for (int i = 1; i < 10; i++)
 			{
 				Thread.Sleep(TimeSpan.FromMilliseconds(50));
-				//Progress = ((double)i) / 10;
+				Progress = ((double)i) / 10;
 				this.GenerateOutput(i);
 			}
 
+			// no permission for this
 			//var inst = Environment.NewServiceInstance(this.Configuration);
 			//inst.Start();
 
-			throw new InvalidOperationException("Can't do this shit here.");
+			//throw new InvalidOperationException("Can't do this shit here.");
 
 			return ServiceOutcome.Success;
 		}
