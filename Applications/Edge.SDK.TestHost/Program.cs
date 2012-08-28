@@ -36,10 +36,13 @@ namespace Edge.SDK.TestHost
 			{
 				IsEnabled = true,
 				ServiceName = "Test",
-				ServiceClass = typeof(TestService).AssemblyQualifiedName
+				ServiceClass = typeof(TestService).AssemblyQualifiedName,
+				HostName = "Johnny"
 			};
 
 
+			#region workflow
+			/*
 			// ..........................................................
 			// workflow example
 
@@ -62,6 +65,8 @@ namespace Edge.SDK.TestHost
 					new WorkflowStep() { Name = "Commit", ServiceConfiguration =  stepConfig},
 				}
 			};
+			*/
+			#endregion
 
 			// ..........................................................
 			var profile = new ServiceProfile()
