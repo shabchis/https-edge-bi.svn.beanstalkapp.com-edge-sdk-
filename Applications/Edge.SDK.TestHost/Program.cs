@@ -16,8 +16,18 @@ namespace Edge.SDK.TestHost
 			// ..........................................................
 			// STEP 1 - host
 
+			var envConfig = new ServiceEnvironmentConfiguration()
+			{
+				ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
+				HostListSP = "ServiceEnvironment_ListHosts",
+				HostRegisterSP = "ServiceEnvironment_RegisterHost",
+				HostUnregisterSP = "ServiceEnvironment_UnregisterHost"
+			};
+
 			//var env = new ServiceEnvironment();
-			var host = new ServiceExecutionHost();
+			var host = new ServiceExecutionHost("Johnny", envConfig);
+
+			//host.Environment.ServiceScheduleRequested += new EventHandler<ServiceInstanceEventArgs>(Environment_ServiceScheduleRequested);	
 
 			// ..........................................................
 			// STEP 2 - service
@@ -25,21 +35,35 @@ namespace Edge.SDK.TestHost
 			var serviceTemplate = new ServiceConfiguration()
 			{
 				IsEnabled = true,
-				ServiceName = "TestService",
+				ServiceName = "Test",
 				ServiceClass = typeof(TestService).AssemblyQualifiedName
 			};
-			
-			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration();
+
+
+			// ..........................................................
+			// workflow example
+
+			ServiceConfiguration stepConfig = new ServiceConfiguration()
+			{
+				ServiceClass = typeof(WorkflowStepExample).AssemblyQualifiedName
+			};
+
+			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration() { ServiceName = "PipelineExample" };
 			workflowConfig.Workflow = new WorkflowNodeGroup()
 			{
 				Mode = WorkflowNodeGroupMode.Linear,
 				Nodes = new LockableList<WorkflowNode>()
 				{
-					//		new Step() { Name = "Retriever", ServiceConfiguration =  }
+					new WorkflowStep() { Name = "Initialize", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Retriever", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Processor", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Transform", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Stage", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Commit", ServiceConfiguration =  stepConfig},
 				}
 			};
-			
 
+			// ..........................................................
 			var profile = new ServiceProfile()
 			{
 				Name = "Doron"
@@ -55,24 +79,17 @@ namespace Edge.SDK.TestHost
 				instance.OutputGenerated += new EventHandler<ServiceOutputEventArgs>(instance_OutputGenerated);
 				instance.Start();
 			} while (Console.ReadLine() != "exit");
+		}
 
-			/*
-			ServiceConfiguration retrieverConfig = new ServiceConfiguration()
-			{
-				ServiceName = "FacebookRetrieverService",
-			};
-			retrieverConfig.Parameters["FacebookToken"] = 123;
-			*/
-			
-			
-
-			
+		static void Environment_ServiceScheduleRequested(object sender, ServiceInstanceEventArgs e)
+		{
+			e.ServiceInstance.Start();
 		}
 
 		static void instance_StateChanged(object sender, EventArgs e)
 		{
 			var instance = (ServiceInstance) sender;
-			Console.WriteLine("{3} -- state: {0}, progress: {1}, outcome: {2}", instance.State, instance.Progress, instance.Outcome, instance.InstanceID.ToString("N").Substring(0,4));
+			Console.WriteLine("{3} ({4}) -- state: {0}, progress: {1}, outcome: {2}", instance.State, instance.Progress, instance.Outcome, instance.Configuration.ServiceName, instance.InstanceID.ToString("N").Substring(0,4));
 		}
 
 
@@ -81,6 +98,15 @@ namespace Edge.SDK.TestHost
 			Console.WriteLine("     --> " + e.Output.ToString());
 		}
 
+	}
+
+	public class WorkflowStepExample : Service
+	{
+		protected override ServiceOutcome DoWork()
+		{
+			Thread.Sleep(TimeSpan.FromSeconds(2));
+			return ServiceOutcome.Success;
+		}
 	}
 
 	public class TestService : Service
