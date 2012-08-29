@@ -19,9 +19,9 @@ namespace Edge.SDK.TestHost
 			var envConfig = new ServiceEnvironmentConfiguration()
 			{
 				ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
-				HostListSP = "ServiceEnvironment_ListHosts",
-				HostRegisterSP = "ServiceEnvironment_RegisterHost",
-				HostUnregisterSP = "ServiceEnvironment_UnregisterHost"
+				HostListSP = "Service_HostList",
+				HostRegisterSP = "Service_HostRegister",
+				HostUnregisterSP = "Service_HostUnregister"
 			};
 
 			//var env = new ServiceEnvironment();
