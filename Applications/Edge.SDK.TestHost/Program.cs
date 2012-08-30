@@ -18,14 +18,17 @@ namespace Edge.SDK.TestHost
 
 			var envConfig = new ServiceEnvironmentConfiguration()
 			{
+				DefaultHostName = "Johnny",
 				ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
-				HostListSP = "Service_HostList",
-				HostRegisterSP = "Service_HostRegister",
-				HostUnregisterSP = "Service_HostUnregister"
+				SP_HostList = "Service_HostList",
+				SP_HostRegister = "Service_HostRegister",
+				SP_HostUnregister = "Service_HostUnregister",
+				SP_InstanceSave = "Service_InstanceSave",
+
 			};
 
-			//var env = new ServiceEnvironment();
-			var host = new ServiceExecutionHost("Johnny", envConfig);
+			var environment = new ServiceEnvironment(envConfig);
+			var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
 
 			//host.Environment.ServiceScheduleRequested += new EventHandler<ServiceInstanceEventArgs>(Environment_ServiceScheduleRequested);	
 
@@ -42,16 +45,16 @@ namespace Edge.SDK.TestHost
 
 
 			#region workflow
-			/*
+			
 			// ..........................................................
 			// workflow example
 
-			ServiceConfiguration stepConfig = new ServiceConfiguration()
+			var stepConfig = new ServiceConfiguration()
 			{
 				ServiceClass = typeof(WorkflowStepExample).AssemblyQualifiedName
 			};
 
-			WorkflowServiceConfiguration workflowConfig = new WorkflowServiceConfiguration() { ServiceName = "PipelineExample" };
+			var workflowConfig = new WorkflowServiceConfiguration() { ServiceName = "PipelineExample" };
 			workflowConfig.Workflow = new WorkflowNodeGroup()
 			{
 				Mode = WorkflowNodeGroupMode.Linear,
@@ -65,7 +68,7 @@ namespace Edge.SDK.TestHost
 					new WorkflowStep() { Name = "Commit", ServiceConfiguration =  stepConfig},
 				}
 			};
-			*/
+			
 			#endregion
 
 			// ..........................................................
@@ -75,11 +78,11 @@ namespace Edge.SDK.TestHost
 			};
 			profile.Parameters["AccountID"] = 10035;
 
-			ServiceConfiguration profileService = profile.DeriveConfiguration(serviceTemplate);
+			ServiceConfiguration profileService = profile.DeriveConfiguration(workflowConfig);
 
 			do
 			{
-				ServiceInstance instance = host.Environment.NewServiceInstance(profileService);
+				ServiceInstance instance = environment.NewServiceInstance(profileService);
 				instance.StateChanged += new EventHandler(instance_StateChanged);
 				instance.OutputGenerated += new EventHandler<ServiceOutputEventArgs>(instance_OutputGenerated);
 				instance.Start();
