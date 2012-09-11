@@ -24,6 +24,7 @@ namespace Edge.SDK.TestHost
 				SP_HostRegister = "Service_HostRegister",
 				SP_HostUnregister = "Service_HostUnregister",
 				SP_InstanceSave = "Service_InstanceSave",
+				SP_InstanceGet = "Service_InstanceGet",
 				SP_InstanceReset = "Service_InstanceReset",
 				SP_EnvironmentEventList = "Service_EnvironmentEventList",
 				SP_EnvironmentEventRegister = "Service_EnvironmentEventRegister"
@@ -96,7 +97,7 @@ namespace Edge.SDK.TestHost
 
 		static void Environment_ServiceScheduleRequested(object sender, ServiceScheduleRequestedEventArgs e)
 		{
-			Console.WriteLine("Environment_ServiceScheduleRequested");
+			Console.WriteLine("     --> child of: {0}", e.ServiceInstance.ParentInstance != null ? e.ServiceInstance.ParentInstance.Configuration.ServiceName : "(no parent)");
 			e.ServiceInstance.StateChanged += new EventHandler(instance_StateChanged);
 			e.ServiceInstance.OutputGenerated += new EventHandler<ServiceOutputEventArgs>(instance_OutputGenerated);
 			e.ServiceInstance.Start();
