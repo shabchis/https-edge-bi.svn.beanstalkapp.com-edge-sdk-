@@ -24,24 +24,28 @@ namespace Edge.SDK.TestHost
 				SP_HostRegister = "Service_HostRegister",
 				SP_HostUnregister = "Service_HostUnregister",
 				SP_InstanceSave = "Service_InstanceSave",
+				SP_InstanceReset = "Service_InstanceReset",
+				SP_EnvironmentEventList = "Service_EnvironmentEventList",
+				SP_EnvironmentEventRegister = "Service_EnvironmentEventRegister"
 
 			};
 
 			var environment = new ServiceEnvironment(envConfig);
 			var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
 
-			//host.Environment.ServiceScheduleRequested += new EventHandler<ServiceInstanceEventArgs>(Environment_ServiceScheduleRequested);	
+			environment.ListenForEvents(ServiceEnvironmentEventType.ServiceScheduleRequested);
+			environment.ServiceScheduleRequested += new EventHandler<ServiceScheduleRequestedEventArgs>(Environment_ServiceScheduleRequested);	
 
 			// ..........................................................
 			// STEP 2 - service
 
-			var serviceTemplate = new ServiceConfiguration()
-			{
-				IsEnabled = true,
-				ServiceName = "Test",
-				ServiceClass = typeof(TestService).AssemblyQualifiedName,
-				HostName = "Johnny"
-			};
+			//var serviceTemplate = new ServiceConfiguration()
+			//{
+			//    IsEnabled = true,
+			//    ServiceName = "Test",
+			//    ServiceClass = typeof(TestService).AssemblyQualifiedName,
+			//    HostName = "Johnny"
+			//};
 
 
 			#region workflow
@@ -60,12 +64,13 @@ namespace Edge.SDK.TestHost
 				Mode = WorkflowNodeGroupMode.Linear,
 				Nodes = new LockableList<WorkflowNode>()
 				{
-					new WorkflowStep() { Name = "Initialize", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Initializer", ServiceConfiguration =  stepConfig},
 					new WorkflowStep() { Name = "Retriever", ServiceConfiguration =  stepConfig},
 					new WorkflowStep() { Name = "Processor", ServiceConfiguration =  stepConfig},
 					new WorkflowStep() { Name = "Transform", ServiceConfiguration =  stepConfig},
 					new WorkflowStep() { Name = "Stage", ServiceConfiguration =  stepConfig},
 					new WorkflowStep() { Name = "Commit", ServiceConfiguration =  stepConfig},
+					new WorkflowStep() { Name = "Cubes", ServiceConfiguration =  stepConfig},
 				}
 			};
 			
@@ -89,8 +94,11 @@ namespace Edge.SDK.TestHost
 			} while (Console.ReadLine() != "exit");
 		}
 
-		static void Environment_ServiceScheduleRequested(object sender, ServiceInstanceEventArgs e)
+		static void Environment_ServiceScheduleRequested(object sender, ServiceScheduleRequestedEventArgs e)
 		{
+			Console.WriteLine("Environment_ServiceScheduleRequested");
+			e.ServiceInstance.StateChanged += new EventHandler(instance_StateChanged);
+			e.ServiceInstance.OutputGenerated += new EventHandler<ServiceOutputEventArgs>(instance_OutputGenerated);
 			e.ServiceInstance.Start();
 		}
 
