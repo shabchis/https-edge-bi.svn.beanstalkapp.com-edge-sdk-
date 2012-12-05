@@ -34,6 +34,7 @@ namespace Edge.SDK.TestHost
 			var environment = new ServiceEnvironment(envConfig);
 			var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
 
+            // Disabled for now - work in progress
 			environment.ListenForEvents(ServiceEnvironmentEventType.ServiceScheduleRequested);
 			environment.ServiceScheduleRequested += new EventHandler<ServiceScheduleRequestedEventArgs>(Environment_ServiceScheduleRequested);	
 
