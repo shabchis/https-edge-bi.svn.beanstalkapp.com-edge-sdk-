@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Program_prev.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +58,10 @@
     <ProjectReference Include="..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj">
       <Project>{76f5133e-50cd-4282-97e0-b431facb3acc}</Project>
       <Name>Edge.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UnitTests\Edge.UnitTests.Core.Services.Scheduling\Edge.UnitTests.Core.Services.Scheduling.csproj">
+      <Project>{6bde278a-3725-4bbb-8484-d87e7c567213}</Project>
+      <Name>Edge.UnitTests.Core.Services.Scheduling</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
