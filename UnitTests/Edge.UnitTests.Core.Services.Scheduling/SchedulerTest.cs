@@ -624,9 +624,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
                 Thread.Sleep(5000);
             }
 
-            Debug.WriteLine(DateTime.Now + ": Finishing workflow test");
-            Thread.Sleep(120000);
-            Debug.WriteLine(DateTime.Now + ": Finishing workflow test");
+            Debug.WriteLine(DateTime.Now + ": Finish workflow test");
         }
 
         #region Integration Test
