@@ -16,7 +16,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
         protected override ServiceOutcome DoWork()
         {
             Debug.WriteLine(DateTime.Now + String.Format(": Starting '{0}'", Configuration.ServiceName));
-            Thread.Sleep(TimeSpan.FromSeconds(30));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
             Debug.WriteLine(DateTime.Now + String.Format(": Finishing '{0}'", Configuration.ServiceName));
 
             return ServiceOutcome.Success;
