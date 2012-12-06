@@ -1,4 +1,6 @@
 ﻿using System;
+using Edge.Core;
+using Edge.Core.Services.Workflow;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Edge.Core.Services.Scheduling;
 using System.Diagnostics;
@@ -34,8 +36,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             TestSetup();
 
             Debug.WriteLine("Current time=" + DateTime.Now);
-            Log.Write(this.ToString(), "Current time=" + DateTime.Now, LogMessageType.Debug);
-
+            
             var env = CreateEnvironment();
             var schedulerConfig = GenerateBaseSchedulerConfig();
 
@@ -49,14 +50,14 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             // specific day in the week
             serviceConfig = CreateServiceConfig("service2", schedulerConfig);
             serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Week;
-            serviceConfig.SchedulingRules[0].Days = new int[] { (int)DateTime.Now.DayOfWeek + 1 };
+            serviceConfig.SchedulingRules[0].Days = new[] { (int)DateTime.Now.DayOfWeek + 1 };
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour + schedulerConfig.Timeframe.Hours - 1, 0, 0);
             CreateProfile(2, serviceConfig, schedulerConfig);
 
             // specific day in the month
             serviceConfig = CreateServiceConfig("service3", schedulerConfig);
             serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Month;
-            serviceConfig.SchedulingRules[0].Days = new int[] { (int)DateTime.Now.Day + 1 };
+            serviceConfig.SchedulingRules[0].Days = new[] { DateTime.Now.Day + 1 };
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour + schedulerConfig.Timeframe.Hours - 1, 0, 0);
             CreateProfile(3, serviceConfig, schedulerConfig);
 
@@ -101,14 +102,14 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             // specific day in the week
             serviceConfig = CreateServiceConfig("service2", schedulerConfig);
             serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Week;
-            serviceConfig.SchedulingRules[0].Days = new int[] { (int)DateTime.Now.DayOfWeek + 1 };
+            serviceConfig.SchedulingRules[0].Days = new[] { (int)DateTime.Now.DayOfWeek + 1 };
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour + schedulerConfig.Timeframe.Hours - 1, 0, 0);
             CreateProfile(2, serviceConfig, schedulerConfig);
 
             // specific day in the month
             serviceConfig = CreateServiceConfig("service3", schedulerConfig);
             serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Month;
-            serviceConfig.SchedulingRules[0].Days = new int[] { (int)DateTime.Now.Day + 1 };
+            serviceConfig.SchedulingRules[0].Days = new[] { DateTime.Now.Day + 1 };
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour + schedulerConfig.Timeframe.Hours - 1, 0, 0);
             CreateProfile(3, serviceConfig, schedulerConfig);
 
@@ -116,7 +117,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // assert if was inserted into scheduled or unscheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 0);
@@ -151,7 +152,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             // specific day in the month
             serviceConfig = CreateServiceConfig("service3", schedulerConfig);
             serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Month;
-            serviceConfig.SchedulingRules[0].Days[0] = (int)DateTime.Now.Day;
+            serviceConfig.SchedulingRules[0].Days[0] = DateTime.Now.Day;
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             CreateProfile(3, serviceConfig, schedulerConfig);
 
@@ -159,7 +160,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // 3 services should be inserted into scheduled list
             Assert.IsTrue(scheduler.ScheduledServices.Count == 3);
@@ -200,7 +201,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // only service2 should be scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 1);
@@ -237,14 +238,14 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // two services are scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 2 && scheduler.UnscheduledServices.Count == 0);
 
             // ?????????????????????????
             Thread.Sleep(new TimeSpan(0, 1, 0));
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             Assert.IsTrue(scheduler.ScheduledServices.Count == 1);
             Assert.IsTrue(scheduler.UnscheduledServices.Count == 0);
@@ -269,7 +270,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             
             // the same service for 3 profiles
             var profile1 = CreateProfile(1, serviceConfig, schedulerConfig);
-            var profile2 = CreateProfile(2, serviceConfig, schedulerConfig);
+            CreateProfile(2, serviceConfig, schedulerConfig);
             var profile3 = CreateProfile(3, serviceConfig, schedulerConfig);
             profile3.Services[0].GetProfileConfiguration().SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 2, 0);
 
@@ -282,7 +283,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // two services are scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 3);
@@ -318,7 +319,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour - 1, DateTime.Now.Minute, DateTime.Now.Second);
 
             // the same service for another profile and deviation 10 sec
-            var profile1 = CreateProfile(1, serviceConfig, schedulerConfig);
+            CreateProfile(1, serviceConfig, schedulerConfig);
             var profile2 = CreateProfile(2, serviceConfig, schedulerConfig);
             profile2.Services[0].GetProfileConfiguration().SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             profile2.Services[0].GetProfileConfiguration().SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 1, 0);
@@ -327,7 +328,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // two services are scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 2);
@@ -370,8 +371,8 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             profile1.Services[0].SchedulingRules.Add(new SchedulingRule
             {
                 Scope = SchedulingScope.Week,
-                Days = new int[] { (int)DateTime.Now.DayOfWeek },
-                Times = new TimeSpan[] { new TimeSpan(DateTime.Now.Hour + 1, 0, 0) },
+                Days = new[] { (int)DateTime.Now.DayOfWeek },
+                Times = new[] { new TimeSpan(DateTime.Now.Hour + 1, 0, 0) },
             });
 
             // same service for the same profile
@@ -381,7 +382,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // two services are scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 3);
@@ -408,12 +409,10 @@ namespace Edge.UnitTests.Core.Services.Scheduling
         public void TestRecovery()
         {
             Debug.WriteLine("Current time=" + DateTime.Now);
-            var baseLineTme = DateTime.Now;
-            baseLineTme = new DateTime(2012, 12, 4, 11, 44, 0);
-            bool isFirstTime = false;
+            var baseLineTme = new DateTime(2012, 12, 4, 11, 44, 0);
 
             // 1st run - all services are shceduled and executed
-            TestRun(isFirstTime, baseLineTme);
+            TestRun(false, baseLineTme);
 
             //Thread.Sleep(11000);
 
@@ -455,7 +454,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             Assert.IsTrue(scheduler.ScheduledServices.Count == (isFirstRun ? 0 : 2));
             Assert.IsTrue(scheduler.UnscheduledServices.Count == 0);
 
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // 1st run: all services should be inserted into scheduled list
             // 2nd run: no services inserted because of already existing services from recovery
@@ -494,7 +493,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             #endregion
 
             var scheduler = new Scheduler(env, schedulerConfig);
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // 2 services should be inserted into scheduled list
             Assert.IsTrue(scheduler.ScheduledServices.Count == 2);
@@ -504,7 +503,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             Thread.Sleep(16000);
 
             // schedule again
-            scheduler.Schedule(false);
+            scheduler.Schedule();
 
             // only 1st service remain in scheduled the 2nd one removed and no more new services were scheduled
             Assert.IsTrue(scheduler.ScheduledServices.Count == 1);
@@ -521,6 +520,116 @@ namespace Edge.UnitTests.Core.Services.Scheduling
         public void TestAddUnplannedService()
         { }
 
+        /// <summary>
+        /// Test long running services. 2 options:
+        /// 1st - cannot be scheduled --> set max deviation for service1
+        /// 2nd - sheduled only after the 1st service finished - remark max deviation for service1
+        /// </summary>
+        [TestMethod]
+        public void TestLongRunningServices()
+        {
+            Debug.WriteLine("Current time=" + DateTime.Now);
+
+            var env = CreateEnvironment();
+            var schedulerConfig = GenerateBaseSchedulerConfig();
+
+            #region Config
+
+            // schedule now
+            var serviceConfig = CreateServiceConfig("service1", schedulerConfig);
+            serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            serviceConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 1, 30);
+            CreateProfile(1, serviceConfig, schedulerConfig);
+
+            // schedule now the same service for another profile with default max deviation = 3 hours
+            CreateProfile(2, serviceConfig, schedulerConfig);
+
+            PrintConfig(schedulerConfig);
+            #endregion
+
+            var scheduler = new Scheduler(env, schedulerConfig);
+            scheduler.Schedule();
+
+            // 2 services should be scheduled but not at the same time
+            Assert.IsTrue(scheduler.ScheduledServices.Count == 2);
+            Assert.IsTrue(scheduler.ScheduledServices[1].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds() > 
+                          scheduler.ScheduledServices[0].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds());
+
+            // till both services are not ended, reschedule every 0.5 min
+            while (scheduler.ScheduledServices[0].State != ServiceState.Ended &&
+                   scheduler.ScheduledServices[1].State != ServiceState.Ended)
+            {
+                Thread.Sleep(30000);
+                scheduler.Schedule();
+
+                // what asserts to do???
+            }
+        }
+
+        /// <summary>
+        /// Test workflow service scheduling
+        /// </summary>
+        [TestMethod]
+        public void TestWorkflowServices()
+        {
+            Debug.WriteLine(DateTime.Now + ": Start workflow test");
+
+            var env = CreateEnvironment();
+            var schedulerConfig = GenerateBaseSchedulerConfig();
+
+            #region Config
+
+            // workflow step definition
+            var stepConfig = new ServiceConfiguration
+            {
+                ServiceClass = typeof(TestService).AssemblyQualifiedName
+            };
+
+            // workflow definition
+            var workflowConfig = new WorkflowServiceConfiguration { ServiceName = "workflowService" };
+            workflowConfig.Workflow = new WorkflowNodeGroup
+            {
+                Mode = WorkflowNodeGroupMode.Linear,
+                Nodes = new LockableList<WorkflowNode>
+				{
+					new WorkflowStep { Name = "service1", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service2", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service3", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service4", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service5", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service6", ServiceConfiguration =  stepConfig},
+					new WorkflowStep { Name = "service7", ServiceConfiguration =  stepConfig},
+				}
+            };
+
+            // set scheduling for workflow service
+            workflowConfig.SchedulingRules.Add(new SchedulingRule
+                {
+                    Scope = SchedulingScope.Day,
+                    Times = new[] { new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second) },
+                    Days = new[] { 0 }
+                });
+            // create profile related to workflow
+            CreateProfile(1, workflowConfig, schedulerConfig);
+
+            PrintConfig(schedulerConfig);
+            #endregion
+
+            var scheduler = new Scheduler(env, schedulerConfig);
+            scheduler.Start();
+
+            // till workflow is not ended
+            while (scheduler.ScheduledServices.Count == 0 || scheduler.ScheduledServices[0].State != ServiceState.Ended)
+            {
+                Thread.Sleep(5000);
+            }
+
+            Debug.WriteLine(DateTime.Now + ": Finishing workflow test");
+            Thread.Sleep(120000);
+            Debug.WriteLine(DateTime.Now + ": Finishing workflow test");
+        }
+
+        #region Integration Test
         /// <summary>
         /// TODO: full integration test with scenario including Scheduler.Start(), Scheduler.Stop(), Scheduler.AddRequest()
         /// </summary>
@@ -567,23 +676,24 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             CreateProfile(4, serviceConfig, schedulerConfig);
 
             PrintConfig(schedulerConfig);
-        }
+        } 
+        #endregion
 
         #region Private Help Functions
         private SchedulerConfiguration GenerateBaseSchedulerConfig()
         {
             // general config
             var schedulerConfig = new SchedulerConfiguration
-            {
-                Percentile = 80,
-                MaxExecutionTimeFactor = 2,
-                Timeframe = new TimeSpan(2, 0, 0),
-                SamplingInterval = new TimeSpan(0, 0, 30),
-                ResheduleInterval = new TimeSpan(0, 0, 1),
-                ExecutionStatisticsRefreshInterval = new TimeSpan(0, 1, 0)
-            };
-            schedulerConfig.ServiceConfigurationList = new List<ServiceConfiguration>();
-            schedulerConfig.Profiles = new ProfilesCollection();
+                {
+                    Percentile = 80,
+                    MaxExecutionTimeFactor = 2,
+                    Timeframe = new TimeSpan(2, 0, 0),
+                    SamplingInterval = new TimeSpan(0, 0, 10),
+                    ResheduleInterval = new TimeSpan(0, 0, 1),
+                    ExecutionStatisticsRefreshInterval = new TimeSpan(0, 1, 0),
+                    ServiceConfigurationList = new List<ServiceConfiguration>(),
+                    Profiles = new ProfilesCollection()
+                };
 
             return schedulerConfig;
         }
@@ -591,8 +701,8 @@ namespace Edge.UnitTests.Core.Services.Scheduling
         private ServiceEnvironment CreateEnvironment(bool cleanRecovery = true)
         {
             // create service env
-            var envConfig = new ServiceEnvironmentConfiguration()
-            {
+            var envConfig = new ServiceEnvironmentConfiguration
+                {
                 DefaultHostName = "Johnny",
                 ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
                 SP_HostList = "Service_HostList",
@@ -620,26 +730,22 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
         private ServiceConfiguration CreateServiceConfig(string serviceName, SchedulerConfiguration schedulerConfig)
         {
-            var serviceConfig = new ServiceConfiguration()
+            var serviceConfig = new ServiceConfiguration
                 {
                     IsEnabled = true,
                     ServiceName = serviceName,
-                    ServiceClass = typeof(TestService).AssemblyQualifiedName,
-                    HostName = "Johnny"
+                    ServiceClass = typeof (TestService).AssemblyQualifiedName,
+                    HostName = "Johnny",
+                    ConfigurationID = GetGuidFromString(serviceName),
+                    Limits = {MaxConcurrentPerTemplate = 1, MaxConcurrentPerProfile = 1}
                 };
-            // get config ID from name
-            serviceConfig.ConfigurationID = GetGuidFromString(serviceName);
-
-            // add service limits
-            serviceConfig.Limits.MaxConcurrentPerTemplate = 1;
-            serviceConfig.Limits.MaxConcurrentPerProfile = 1;
 
             // add scheduling rule to service config
             serviceConfig.SchedulingRules.Add(new SchedulingRule
             {
                 Scope = SchedulingScope.Day,
-                Times = new TimeSpan[] { new TimeSpan(0, 0, 0) },
-                Days = new int[] {0}
+                Times = new[] { new TimeSpan(0, 0, 0) },
+                Days = new[] {0}
             });
 
             // add to service list in configuration
@@ -648,10 +754,10 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             return serviceConfig;
         }
 
-        private ServiceProfile CreateProfile(int accountID, ServiceConfiguration serviceConfig, SchedulerConfiguration schedulerConfig)
+        private ServiceProfile CreateProfile(int accountId, ServiceConfiguration serviceConfig, SchedulerConfiguration schedulerConfig)
         {
-            var profile = new ServiceProfile { Name =  String.Format("profile{0}", accountID)};
-            profile.Parameters["AccountID"] = accountID;
+            var profile = new ServiceProfile { Name =  String.Format("profile{0}", accountId)};
+            profile.Parameters["AccountID"] = accountId;
 
             profile.Services.Add(GetProfileConfiguration(serviceConfig, profile));
             schedulerConfig.Profiles.Add(profile);
@@ -674,9 +780,9 @@ namespace Edge.UnitTests.Core.Services.Scheduling
                 {
                     foreach(var rule in service.SchedulingRules)
                     {
-                        Debug.WriteLine("Profile {0}, service {1}, rule: scope={2}, time={3}, day={4}, max deviation after={5}, max deviation before={6}", 
+                        Debug.WriteLine(DateTime.Now + String.Format(": Configuration: Profile {0}, service {1}, rule: scope={2}, time={3}, day={4}, max deviation after={5}, max deviation before={6}", 
                                         profile.Name, service.ServiceName, rule.Scope, rule.Times[0], rule.Days[0],
-                                        rule.MaxDeviationAfter, rule.MaxDeviationBefore);
+                                        rule.MaxDeviationAfter, rule.MaxDeviationBefore));
 
                     }
                 }
@@ -703,8 +809,10 @@ namespace Edge.UnitTests.Core.Services.Scheduling
             var env = environment.EnvironmentConfiguration;
             using (var connection = new SqlConnection(env.ConnectionString))
             {
-                var command = new SqlCommand("delete from dbo.ServiceInstance_v3", connection);
-                command.CommandType = CommandType.Text;
+                var command = new SqlCommand("delete from dbo.ServiceInstance_v3", connection)
+                    {
+                        CommandType = CommandType.Text
+                    };
                 connection.Open();
                 command.ExecuteNonQuery();
             }
