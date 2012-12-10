@@ -25,18 +25,15 @@ namespace Edge.SDK.TestScheduling
             {
                 DefaultHostName = "Johnny",
                 ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
-                SP_HostList = "Service_HostList",
                 SP_HostRegister = "Service_HostRegister",
                 SP_HostUnregister = "Service_HostUnregister",
                 SP_InstanceSave = "Service_InstanceSave",
                 SP_InstanceGet = "Service_InstanceGet",
                 SP_InstanceReset = "Service_InstanceReset",
-                SP_EnvironmentEventList = "Service_EnvironmentEventList",
-                SP_EnvironmentEventRegister = "Service_EnvironmentEventRegister",
                 SP_ServicesExecutionStatistics = "Service_ExecutionStatistics_GetByPercentile",
                 SP_InstanceActiveListGet = "Service_InstanceActiveList_GetByTime"
             };
-            var environment = new ServiceEnvironment(envConfig);
+            var environment = ServiceEnvironment.Open(envConfig);
 
             // generate scheduler config, create scheduler and start it
             var schedulerConfig = GenerateConfigForScheduler();
