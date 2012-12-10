@@ -31,7 +31,7 @@ namespace Edge.SDK.TestHost
 				SP_EnvironmentEventListenerUnregister = "Service_EnvironmentEventListenerUnregister"
 			};
 
-			var environment = ServiceEnvironment.Load(envConfig);
+			var environment = ServiceEnvironment.Open(envConfig);
 			using (var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment))
 			{
 
