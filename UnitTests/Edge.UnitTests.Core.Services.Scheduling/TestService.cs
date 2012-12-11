@@ -1,10 +1,8 @@
 ﻿using Edge.Core.Services;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
+using Edge.Core.Utilities;
 
 namespace Edge.UnitTests.Core.Services.Scheduling
 {
@@ -15,11 +13,27 @@ namespace Edge.UnitTests.Core.Services.Scheduling
     {
         protected override ServiceOutcome DoWork()
         {
-            Debug.WriteLine(DateTime.Now + String.Format(": Starting '{0}'", Configuration.ServiceName));
-            Thread.Sleep(TimeSpan.FromSeconds(10));
-            Debug.WriteLine(DateTime.Now + String.Format(": Finishing '{0}'", Configuration.ServiceName));
+	        var config = Configuration.GetProfileConfiguration();
+	        var profileName = (config != null && config.Profile != null) ? config.Profile.Name : String.Empty;
+
+            WriteLog(String.Format("Start service {0}, profile {1}", Configuration.ServiceName, profileName));
+
+	        for (int i = 0; i < 10; i++)
+	        {
+				Thread.Sleep(TimeSpan.FromSeconds(1));
+		        Progress = (double)i/10;
+	        }
+
+			WriteLog(String.Format("Finish service {0}, profile {1}", Configuration.ServiceName, profileName));
 
             return ServiceOutcome.Success;
         }
+
+		private void WriteLog(string msg)
+		{
+			Debug.WriteLine("{0}: {1}", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), msg);
+            Log(msg, LogMessageType.Debug);
+		}
+
     }
 }
