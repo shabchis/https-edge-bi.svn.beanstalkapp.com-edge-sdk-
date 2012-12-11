@@ -20,7 +20,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 	        for (int i = 0; i < 10; i++)
 	        {
-				Thread.Sleep(TimeSpan.FromSeconds(1));
+				Thread.Sleep(TimeSpan.FromSeconds(3));
 		        Progress = (double)i/10;
 	        }
 
