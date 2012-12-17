@@ -1,6 +1,7 @@
 ﻿using System;
 using Edge.Core.Utilities;
 using Edge.UnitTests.Core.Services.Scheduling;
+
 namespace Edge.SDK.TestScheduling
 {
     class Program
@@ -12,8 +13,7 @@ namespace Edge.SDK.TestScheduling
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
 
-			Log.Write("Scheduling Test", "Started Scheduling Test", LogMessageType.Debug);
-
+			Log.Write("TestScheduling", "Starting Scheduling Test", LogMessageType.Debug);
 			
             //--------------------------------
             // Workflow Test
@@ -23,7 +23,10 @@ namespace Edge.SDK.TestScheduling
             //--------------------------------
             // Full Instegration Test
             //-------------------------------
-			test.TestFullIntegration();
+			test.TestFullIntegration(false);
+
+			Log.Write("TestScheduling", "Started Scheduling Test", LogMessageType.Debug);
+
 			do
 			{
 
