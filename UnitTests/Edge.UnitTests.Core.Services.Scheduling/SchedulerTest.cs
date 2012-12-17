@@ -12,7 +12,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
-using Edge.Core.Utilities;
 
 namespace Edge.UnitTests.Core.Services.Scheduling
 {
@@ -635,14 +634,15 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		/// TODO: full integration test with scenario including Scheduler.Start(), Scheduler.Stop(), Scheduler.AddRequest()
 		/// </summary>
 		[TestMethod]
-		public void TestFullIntegration()
+		public void TestFullIntegration(bool startHost = true)
 		{
 			Debug.WriteLine(DateTime.Now + ": Start full integration test");
 
-			var env = CreateEnvironment();
+			var env = CreateEnvironment(startHost: startHost);
 			var schedulerConfig = GenerateBaseSchedulerConfig();
 
-			GetIntegrationTestConfig(schedulerConfig);
+			//GetIntegrationTestConfig(schedulerConfig);
+			GetIntegrationTestConfig_Test(schedulerConfig);
 
 			var scheduler = new Scheduler(env, schedulerConfig);
 			scheduler.Start();
@@ -721,70 +721,70 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			//-------------------------
 			// Option Rally
 			//-------------------------
-			var profileOR = CreateProfile(10035, null, schedulerConfig, "Option Rally");
+			var profileOr = CreateProfile(10035, null, schedulerConfig, "Option Rally");
 			
 			// 4 google adwords: 05:10, 05:11, 11:30 and 11:31
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 10, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 10, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 11, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 11, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 30, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 31, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 31, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
 			// 2 google adwords automatic placements
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOR));
-			profileOR.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOR));
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOr));
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOr));
 
 			// 2 facebook: 5:15 and 11:30
-			profileOR.Services.Add(GetProfileConfiguration(facebookConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 15, 0);
+			profileOr.Services.Add(GetProfileConfiguration(facebookConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(5, 15, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(facebookConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(facebookConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 30, 0);
 
 			// backoffice: every day: regular, 11:00, 19:00, 19:30, 20:00, 20:30 and every Tuesday: 9:00, 9:30, 10:00
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 0, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 50, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 50, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(19, 0, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(19, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(19, 30, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(19, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(20, 0, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(20, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(20, 30, 0);
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(20, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0] = new SchedulingRule {Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(9, 0, 0)}};
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule {Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(9, 0, 0)}};
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(9, 30, 0)}};
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(9, 30, 0)}};
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
 
-			profileOR.Services.Add(GetProfileConfiguration(backofficeConfig, profileOR));
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(10, 0, 0)}};
-			profileOR.Services[profileOR.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 46, 0);
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {2}, Times = new[] {new TimeSpan(10, 0, 0)}};
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 46, 0);
 
 			#endregion
 
@@ -792,17 +792,17 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			//-------------------------
 			// InterTrader
 			//-------------------------
-			var profileIT = CreateProfile(1239, null, schedulerConfig, "InterTrader");
+			var profileIt = CreateProfile(1239, null, schedulerConfig, "InterTrader");
 
 			// 2 google adwords: regular and every Monday on 7:30
-			profileIT.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIT));
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIt));
 
-			profileIT.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIT));
-			profileIT.Services[profileIT.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {1}, Times = new[] {new TimeSpan(7, 30, 0)}};
-			profileIT.Services[profileIT.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIt));
+			profileIt.Services[profileIt.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] {1}, Times = new[] {new TimeSpan(7, 30, 0)}};
+			profileIt.Services[profileIt.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
 
 			// 1 google adwords automatic placements
-			profileIT.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileIT));
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileIt));
 
 			#endregion
 
@@ -810,19 +810,19 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			//-------------------------
 			// Stock Pair
 			//-------------------------
-			var profileSP = CreateProfile(1249, null, schedulerConfig, "Stock Pair");
+			var profileSp = CreateProfile(1249, null, schedulerConfig, "Stock Pair");
 
 			// 1 google adwords
-			profileSP.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileSP));
+			profileSp.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileSp));
 
 			// 1 google adwords automatic placements
-			profileSP.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileSP));
+			profileSp.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileSp));
 
 			// 1 MS ad center
-			profileSP.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileSP));
+			profileSp.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileSp));
 
 			// 1 backoffice
-			profileSP.Services.Add(GetProfileConfiguration(backofficeConfig, profileSP));
+			profileSp.Services.Add(GetProfileConfiguration(backofficeConfig, profileSp));
 
 			#endregion
 
@@ -976,27 +976,27 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			//-------------------------
 			// Bbinary
 			//-------------------------
-			var profileBB = CreateProfile(1006, null, schedulerConfig, "Bbinary");
+			var profileBb = CreateProfile(1006, null, schedulerConfig, "Bbinary");
 
 			// 2 google adwords: 9:10 and 16:50
-			profileBB.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBB));
-			profileBB.Services[profileBB.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(9, 10, 0);
+			profileBb.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(9, 10, 0);
 
-			profileBB.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBB));
-			profileBB.Services[profileBB.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(16, 50, 0);
-			profileBB.Services[profileBB.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
+			profileBb.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(16, 50, 0);
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
 
 			// 1 facebook
-			profileBB.Services.Add(GetProfileConfiguration(facebookConfig, profileBB));
+			profileBb.Services.Add(GetProfileConfiguration(facebookConfig, profileBb));
 
 			// 1 MS ad center
-			profileBB.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileBB));
+			profileBb.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileBb));
 
 			// 2 backoffice: regular and every day on 11:10 
-			profileBB.Services.Add(GetProfileConfiguration(backofficeConfig, profileBB));
+			profileBb.Services.Add(GetProfileConfiguration(backofficeConfig, profileBb));
 
-			profileBB.Services.Add(GetProfileConfiguration(backofficeConfig, profileBB));
-			profileBB.Services[profileBB.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 20, 0);
+			profileBb.Services.Add(GetProfileConfiguration(backofficeConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(11, 20, 0);
 			
 			#endregion
 
@@ -1020,6 +1020,380 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			#endregion
 			
 			PrintConfig(schedulerConfig);
+		}
+
+		private void GetIntegrationTestConfig_Test(SchedulerConfiguration schedulerConfig)
+		{
+			#region Generic Services
+			//-------------------------
+			// generic services
+			//-------------------------
+			var googleAdwordsConfig = CreateWorkflowServiceConfig("Google.Adwords", schedulerConfig);
+			googleAdwordsConfig.SchedulingRules[0].Times[0] = new TimeSpan(18, 0, 0);
+			googleAdwordsConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			var googleAdwordsAutoPlacementsConfig = CreateWorkflowServiceConfig("Google.AdWords.AutomaticPlacements", schedulerConfig);
+			googleAdwordsAutoPlacementsConfig.SchedulingRules[0].Times[0] = new TimeSpan(18, 0, 0);
+			googleAdwordsAutoPlacementsConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			var facebookConfig = CreateWorkflowServiceConfig("Facebook", schedulerConfig);
+			facebookConfig.SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+			facebookConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 15, 0);
+			facebookConfig.Limits.MaxConcurrentPerTemplate = 2;
+			facebookConfig.Limits.MaxConcurrentPerProfile = 2;
+
+			var msAdCenterConfig = CreateWorkflowServiceConfig("Microsoft.AdCenter", schedulerConfig);
+			msAdCenterConfig.SchedulingRules[0].Times[0] = new TimeSpan(18, 5, 0);
+			msAdCenterConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			var backofficeConfig = CreateWorkflowServiceConfig("Backoffice", schedulerConfig);
+			backofficeConfig.SchedulingRules[0].Times[0] = new TimeSpan(18, 15, 0);
+			backofficeConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			#endregion
+
+			#region Accounts
+			//-------------------------
+			// Accounts
+			//-------------------------
+
+			#region Easy Forex
+			//-------------------------
+			// Easy Forex
+			//-------------------------
+			var profileEf = CreateProfile(7, null, schedulerConfig, "Easy Forex");
+
+			// 5 google adwords
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+
+			// 4 google adwords automatic placements
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileEf));
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileEf));
+
+			// 1 facebook
+			profileEf.Services.Add(GetProfileConfiguration(facebookConfig, profileEf));
+
+			// 1 MS ad center
+			profileEf.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileEf));
+
+			// 2 backoffice with 4:20 and rerun on 11:10
+			profileEf.Services.Add(GetProfileConfiguration(backofficeConfig, profileEf));
+			profileEf.Services[profileEf.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+
+			profileEf.Services.Add(GetProfileConfiguration(backofficeConfig, profileEf));
+			profileEf.Services[profileEf.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 10, 0);
+
+			#endregion
+
+			#region Option Rally
+			//-------------------------
+			// Option Rally
+			//-------------------------
+			var profileOr = CreateProfile(10035, null, schedulerConfig, "Option Rally");
+
+			// 4 google adwords: 05:10, 05:11, 11:30 and 11:31
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 10, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 11, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 31, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			// 2 google adwords automatic placements
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOr));
+			profileOr.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileOr));
+
+			// 2 facebook: 5:15 and 11:30
+			profileOr.Services.Add(GetProfileConfiguration(facebookConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 15, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(facebookConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 30, 0);
+
+			// backoffice: every day: regular, 11:00, 19:00, 19:30, 20:00, 20:30 and every Tuesday: 9:00, 9:30, 10:00
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 50, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 0, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 30, 0);
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 2 }, Times = new[] { new TimeSpan(18, 0, 0) } };
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 2 }, Times = new[] { new TimeSpan(18, 30, 0) } };
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileOr.Services.Add(GetProfileConfiguration(backofficeConfig, profileOr));
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 2 }, Times = new[] { new TimeSpan(18, 0, 0) } };
+			profileOr.Services[profileOr.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 46, 0);
+
+			#endregion
+
+			#region InterTrader
+			//-------------------------
+			// InterTrader
+			//-------------------------
+			var profileIt = CreateProfile(1239, null, schedulerConfig, "InterTrader");
+
+			// 2 google adwords: regular and every Monday on 7:30
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIt));
+
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileIt));
+			profileIt.Services[profileIt.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 1 }, Times = new[] { new TimeSpan(18, 30, 0) } };
+			profileIt.Services[profileIt.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
+
+			// 1 google adwords automatic placements
+			profileIt.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileIt));
+
+			#endregion
+
+			#region Stock Pair
+			//-------------------------
+			// Stock Pair
+			//-------------------------
+			var profileSp = CreateProfile(1249, null, schedulerConfig, "Stock Pair");
+
+			// 1 google adwords
+			profileSp.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileSp));
+
+			// 1 google adwords automatic placements
+			profileSp.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileSp));
+
+			// 1 MS ad center
+			profileSp.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileSp));
+
+			// 1 backoffice
+			profileSp.Services.Add(GetProfileConfiguration(backofficeConfig, profileSp));
+
+			#endregion
+
+			#region harmon.ie
+			//-------------------------
+			// harmon.ie
+			//-------------------------
+			var profileH = CreateProfile(1240, null, schedulerConfig, "harmon.ie");
+
+			// 3 google adwords
+			profileH.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileH));
+			profileH.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileH));
+			profileH.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileH));
+
+			// 1 google adwords automatic placements
+			profileH.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileH));
+
+			// 1 MS ad center
+			profileH.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileH));
+
+			// 3 backoffice: regular, every day on 11:40 and every Sunday on 7:30
+			profileH.Services.Add(GetProfileConfiguration(backofficeConfig, profileH));
+
+			profileH.Services.Add(GetProfileConfiguration(backofficeConfig, profileH));
+			profileH.Services[profileH.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 40, 0);
+			profileH.Services[profileH.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 10, 0);
+
+			profileH.Services.Add(GetProfileConfiguration(backofficeConfig, profileH));
+			profileH.Services[profileH.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 0 }, Times = new[] { new TimeSpan(18, 30, 0) } };
+			profileH.Services[profileH.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 10, 0);
+
+			#endregion
+
+			#region Opteck
+			//-------------------------
+			// Opteck
+			//-------------------------
+			var profileOp = CreateProfile(1240235, null, schedulerConfig, "Opteck");
+
+			// 1 google adwords
+			profileOp.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileOp));
+
+			// 1 facebook
+			profileOp.Services.Add(GetProfileConfiguration(facebookConfig, profileOp));
+
+			// 1 MS ad center
+			profileOp.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileOp));
+
+			// 2 backoffice: regular and every day on 11:20
+			profileOp.Services.Add(GetProfileConfiguration(backofficeConfig, profileOp));
+
+			profileOp.Services.Add(GetProfileConfiguration(backofficeConfig, profileOp));
+			profileOp.Services[profileOp.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+			profileOp.Services[profileOp.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 40, 0);
+
+			#endregion
+
+			#region Mansion
+			//-------------------------
+			// Mansion
+			//-------------------------
+			var profileMansion = CreateProfile(1240248, null, schedulerConfig, "Mansion");
+
+			// 13 google adwords every 3 min between 4:05 - 4:45
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 5, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 8, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 11, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 14, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 17, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 23, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 26, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 29, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 32, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 35, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 38, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			profileMansion.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileMansion));
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 41, 0);
+			profileMansion.Services[profileMansion.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 30, 0);
+
+			// 4 MS ad center
+			profileMansion.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileMansion));
+			profileMansion.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileMansion));
+			profileMansion.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileMansion));
+			profileMansion.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileMansion));
+
+			#endregion
+
+			#region GreenSQL
+			//-------------------------
+			// GreenSQL
+			//-------------------------
+			var profileGreen = CreateProfile(1240250, null, schedulerConfig, "GreenSQL");
+
+			// 1 google adwords
+			profileGreen.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileGreen));
+
+			// 1 google adwords automatic placements
+			profileGreen.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profileGreen));
+
+			// 3 backoffice: every day on 4:20, every Sunday on 7:00, every 2nd of the month on 9:00
+			profileGreen.Services.Add(GetProfileConfiguration(backofficeConfig, profileGreen));
+			profileGreen.Services[profileGreen.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+
+			profileGreen.Services.Add(GetProfileConfiguration(backofficeConfig, profileGreen));
+			profileGreen.Services[profileGreen.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Week, Days = new[] { 0 }, Times = new[] { new TimeSpan(18, 0, 0) } };
+			profileGreen.Services[profileGreen.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 15, 0);
+
+			profileGreen.Services.Add(GetProfileConfiguration(backofficeConfig, profileGreen));
+			profileGreen.Services[profileGreen.Services.Count - 1].SchedulingRules[0] = new SchedulingRule { Scope = SchedulingScope.Month, Days = new[] { 2 }, Times = new[] { new TimeSpan(18, 0, 0) } };
+
+			#endregion
+
+			#region Bbinary
+			//-------------------------
+			// Bbinary
+			//-------------------------
+			var profileBb = CreateProfile(1006, null, schedulerConfig, "Bbinary");
+
+			// 2 google adwords: 9:10 and 16:50
+			profileBb.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 10, 0);
+
+			profileBb.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 50, 0);
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 45, 0);
+
+			// 1 facebook
+			profileBb.Services.Add(GetProfileConfiguration(facebookConfig, profileBb));
+
+			// 1 MS ad center
+			profileBb.Services.Add(GetProfileConfiguration(msAdCenterConfig, profileBb));
+
+			// 2 backoffice: regular and every day on 11:10 
+			profileBb.Services.Add(GetProfileConfiguration(backofficeConfig, profileBb));
+
+			profileBb.Services.Add(GetProfileConfiguration(backofficeConfig, profileBb));
+			profileBb.Services[profileBb.Services.Count - 1].SchedulingRules[0].Times[0] = new TimeSpan(18, 20, 0);
+
+			#endregion
+
+			#region Proportzia
+			//-------------------------
+			// Proportzia
+			//-------------------------
+			var profilePr = CreateProfile(42, null, schedulerConfig, "Proportzia");
+
+			// 1 google adwords
+			profilePr.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profilePr));
+
+			// 1 google adwords automatic placements
+			profilePr.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profilePr));
+
+			// 1 facebook
+			profilePr.Services.Add(GetProfileConfiguration(facebookConfig, profilePr));
+
+			#endregion
+
+			#endregion
+
+			PrintConfig(schedulerConfig);
 		} 
 		#endregion
 
@@ -1032,9 +1406,9 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 					Percentile = 80,
 					MaxExecutionTimeFactor = 2,
 					Timeframe = new TimeSpan(2, 0, 0),
-					SamplingInterval = new TimeSpan(0, 10, 0),
+					SamplingInterval = new TimeSpan(0, 2, 0),
 					ResheduleInterval = new TimeSpan(0, 0, 1),
-					ExecutionStatisticsRefreshInterval = new TimeSpan(1, 0, 0),
+					ExecutionStatisticsRefreshInterval = new TimeSpan(0, 10, 0),
 					ServiceConfigurationList = new List<ServiceConfiguration>(),
 					Profiles = new ProfilesCollection()
 				};
@@ -1042,7 +1416,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			return schedulerConfig;
 		}
 
-		private ServiceEnvironment CreateEnvironment(bool cleanRecovery = true)
+		private ServiceEnvironment CreateEnvironment(bool cleanRecovery = true, bool startHost = true)
 		{
 			// create service env
 			var envConfig = new ServiceEnvironmentConfiguration
@@ -1064,7 +1438,11 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 			var environment = ServiceEnvironment.Open(envConfig);
 			//CleanEnvEvents(environment);
-			var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
+
+			if (startHost)
+			{
+				var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
+			}
 
 			if (cleanRecovery)
 			{
