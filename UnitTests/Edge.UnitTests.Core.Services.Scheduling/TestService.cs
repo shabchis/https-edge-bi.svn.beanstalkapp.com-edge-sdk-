@@ -18,11 +18,17 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
             WriteLog(String.Format("Start service {0}, profile {1}", Configuration.ServiceName, profileName));
 
-	        for (int i = 0; i < 10; i++)
-	        {
+			for (int i = 0; i < 10; i++)
+			{
 				Thread.Sleep(TimeSpan.FromSeconds(3));
-		        Progress = (double)i/10;
-	        }
+				Progress = (double)i / 10;
+			}
+
+			//for (int i = 0; i < 2; i++)
+			//{
+			//	Thread.Sleep(TimeSpan.FromSeconds(1));
+			//	Progress = (double)i / 10;
+			//}
 
 			WriteLog(String.Format("Finish service {0}, profile {1}", Configuration.ServiceName, profileName));
 
