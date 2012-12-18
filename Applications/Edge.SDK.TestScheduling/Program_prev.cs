@@ -53,8 +53,8 @@ namespace Edge.SDK.TestScheduling
             {
                 Percentile = 80,
                 Timeframe = new TimeSpan(2, 0, 0),
-                SamplingInterval = new TimeSpan(0, 10, 0),
-                ResheduleInterval = new TimeSpan(0, 0, 1),
+                RescheduleInterval = new TimeSpan(0, 10, 0),
+                ExecuteInterval = new TimeSpan(0, 0, 1),
                 ExecutionStatisticsRefreshInterval = new TimeSpan(23, 59, 0)
             };
 

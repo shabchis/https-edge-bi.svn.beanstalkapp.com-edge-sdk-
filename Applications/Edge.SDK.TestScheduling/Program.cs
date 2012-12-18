@@ -25,6 +25,11 @@ namespace Edge.SDK.TestScheduling
             //-------------------------------
 			test.TestFullIntegration(false);
 
+			//--------------------------------
+			// Stress Test
+			//-------------------------------
+			//test.StressTest(false);
+
 			Log.Write("TestScheduling", "Started Scheduling Test", LogMessageType.Debug);
 
 			do
