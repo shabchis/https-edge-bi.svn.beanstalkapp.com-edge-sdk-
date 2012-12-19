@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using Edge.Core.Scheduling;
 using Edge.Core.Services;
 using Edge.Core.Services.Scheduling;
 using Edge.Core.Utilities;
