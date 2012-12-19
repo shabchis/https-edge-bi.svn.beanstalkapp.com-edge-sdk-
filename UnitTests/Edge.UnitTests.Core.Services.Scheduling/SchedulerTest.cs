@@ -6,7 +6,6 @@ using Edge.Core.Services.Scheduling;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Edge.Core.Services;
-using Edge.Core.Scheduling;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Text;
@@ -265,16 +264,16 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 			#region Config
 
-			// base service
+			// base service with max deviation = 5 min
 			var serviceConfig = CreateServiceConfig("service1", schedulerConfig);
 			serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+			serviceConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 5, 0);
 			
 			// the same service for 3 profiles
 			var profile1 = CreateProfile(1, serviceConfig, schedulerConfig);
 			CreateProfile(2, serviceConfig, schedulerConfig);
-			var profile3 = CreateProfile(3, serviceConfig, schedulerConfig);
-			profile3.Services[0].GetProfileConfiguration().SchedulingRules[0].MaxDeviationAfter = new TimeSpan(0, 2, 0);
-
+			CreateProfile(3, serviceConfig, schedulerConfig);
+			
 			// add another service for profile1
 			serviceConfig = CreateServiceConfig("service2", schedulerConfig);
 			serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
@@ -286,20 +285,25 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			var scheduler = new Scheduler(env, schedulerConfig);
 			scheduler.Schedule();
 
-			// two services are scheduled
-			Assert.IsTrue(scheduler.ScheduledServices.Count == 3);
+			// all services are scheduled
+			Assert.IsTrue(scheduler.ScheduledServices.Count == 4);
+
+			Assert.IsTrue(scheduler.ScheduledServices[0].SchedulingInfo.SchedulingStatus == SchedulingStatus.Scheduled);
+			Assert.IsTrue(scheduler.ScheduledServices[1].SchedulingInfo.SchedulingStatus == SchedulingStatus.Scheduled);
+			Assert.IsTrue(scheduler.ScheduledServices[3].SchedulingInfo.SchedulingStatus == SchedulingStatus.Scheduled);
 			
+			// service1 for profile3 cannot be schedueld
+			Assert.IsTrue(scheduler.ScheduledServices[2].SchedulingInfo.SchedulingStatus == SchedulingStatus.CouldNotBeScheduled);
+			Assert.IsTrue(scheduler.ScheduledServices[2].Configuration.ServiceName == "service1");
+			Assert.IsTrue(scheduler.ScheduledServices[2].Configuration.Profile.Name == "profile-3");
+
 			// service1 for profile1 and service2 for profile1 can be scheduled at the same time
 			Assert.IsTrue(scheduler.ScheduledServices[0].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds() == 
-						  scheduler.ScheduledServices[1].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds());
+						  scheduler.ScheduledServices[3].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds());
 
 			// service1 for profile1 is scheduled after service1 for profile2 - not at the same time
-			Assert.IsTrue(scheduler.ScheduledServices[2].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds() > 
+			Assert.IsTrue(scheduler.ScheduledServices[1].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds() > 
 						  scheduler.ScheduledServices[0].SchedulingInfo.ExpectedStartTime.RemoveMilliseconds());
-
-			// the service1 for profile1 is not scheduled - ???
-			Assert.IsTrue(scheduler.UnscheduledServices.Count == 1);
-			Assert.IsTrue(scheduler.UnscheduledServices[0].Configuration.Profile.Name == "profile3");
 		}
 
 		/// <summary>
@@ -629,6 +633,36 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			}
 
 			Debug.WriteLine(DateTime.Now + ": Finish workflow test");
+		}
+
+		/// <summary>
+		/// This test checks if services are rescheduled after previous services finished before expected time
+		/// </summary>
+		[TestMethod]
+		public void TestRescheduleService(bool startHost = true)
+		{
+			Debug.WriteLine(DateTime.Now + ": Start Reschedule test");
+
+			var env = CreateEnvironment(startHost: startHost);
+			var schedulerConfig = GenerateBaseSchedulerConfig();
+			schedulerConfig.DefaultExecutionTime = new TimeSpan(0, 5, 0);
+			schedulerConfig.RescheduleInterval = new TimeSpan(0, 1, 0);
+
+			#region Config
+			var googleAdwordsAutoPlacementsConfig = CreateWorkflowServiceConfig("Google.AdWords.AutomaticPlacements", schedulerConfig);
+			googleAdwordsAutoPlacementsConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+			googleAdwordsAutoPlacementsConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			// create 5 different profiles with the same service config
+			for (var i = 1; i < 6; i++)
+			{
+				var profile = CreateProfile(i, null, schedulerConfig);
+				profile.Services.Add(GetProfileConfiguration(googleAdwordsAutoPlacementsConfig, profile));
+			}
+			#endregion
+
+			var scheduler = new Scheduler(env, schedulerConfig);
+			scheduler.Start();
 		}
 
 		#region Integration Test
@@ -1040,6 +1074,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 			var env = CreateEnvironment(startHost: startHost);
 			var schedulerConfig = GenerateBaseSchedulerConfig();
+			schedulerConfig.DefaultExecutionTime = new TimeSpan(0,5,0);
 
 			GetStressTestConfig(schedulerConfig);
 
@@ -1049,7 +1084,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 		private void GetStressTestConfig(SchedulerConfiguration schedulerConfig)
 		{
-			var stressHour = DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
+			var stressHour = 16;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
 
 			#region Generic Services
 			//-------------------------
@@ -1563,7 +1598,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		private ServiceConfiguration GetProfileConfiguration(ServiceConfiguration serviceConfig, ServiceProfile profile)
 		{
 			var config = profile.DeriveConfiguration(serviceConfig);
-			config.ConfigurationID = GetGuidFromString(profile.Name);
+			config.ConfigurationID = GetGuidFromString(String.Format("{0}-{1}",profile.Name, serviceConfig.ServiceName));
 			return config;
 		}
 
