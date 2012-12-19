@@ -27,7 +27,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			//for (int i = 0; i < 2; i++)
 			//{
 			//	Thread.Sleep(TimeSpan.FromSeconds(1));
-			//	Progress = (double)i / 10;
+			//	Progress = (double)i / 2;
 			//}
 
 			WriteLog(String.Format("Finish service {0}, profile {1}", Configuration.ServiceName, profileName));
