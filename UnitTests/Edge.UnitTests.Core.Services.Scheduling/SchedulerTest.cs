@@ -583,11 +583,11 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		/// Test workflow service scheduling
 		/// </summary>
 		[TestMethod]
-		public void TestWorkflowServices()
+		public void TestWorkflowServices(bool startHost = true)
 		{
 			Debug.WriteLine(DateTime.Now + ": Start workflow test");
 
-			var env = CreateEnvironment();
+			var env = CreateEnvironment(startHost: startHost);
 			var schedulerConfig = GenerateBaseSchedulerConfig();
 
 			#region Config
@@ -724,8 +724,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			var schedulerConfig = GenerateBaseSchedulerConfig();
 
 			GetIntegrationTestConfig(schedulerConfig);
-			//GetIntegrationTestConfig_Test(schedulerConfig);
-
+			
 			var scheduler = new Scheduler(env, schedulerConfig);
 			scheduler.Start();
 		}
@@ -1128,7 +1127,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 		private void GetStressTestConfig(SchedulerConfiguration schedulerConfig)
 		{
-			var stressHour = 12;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
+			var stressHour = 15;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
 
 			#region Generic Services
 			//-------------------------
