@@ -1128,7 +1128,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 		private void GetStressTestConfig(SchedulerConfiguration schedulerConfig)
 		{
-			var stressHour = 16;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
+			var stressHour = 12;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
 
 			#region Generic Services
 			//-------------------------
@@ -1544,7 +1544,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 				SP_InstanceActiveListGet = "Service_InstanceActiveList_GetByTime"
 			};
 
-			var environment = ServiceEnvironment.Open(envConfig);
+			var environment = ServiceEnvironment.Open("Scheduler Test", envConfig);
 			//CleanEnvEvents(environment);
 
 			if (startHost)
