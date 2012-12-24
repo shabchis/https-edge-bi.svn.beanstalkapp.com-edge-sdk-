@@ -111,6 +111,14 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour + schedulerConfig.Timeframe.Hours - 1, 0, 0);
 			CreateProfile(3, serviceConfig, schedulerConfig);
 
+			// special case for bug when service was schadule even not in timeframe:
+			// requested time + max deviation >= DateTzime.Now
+			serviceConfig = CreateServiceConfig("service4", schedulerConfig);
+			serviceConfig.SchedulingRules[0].Scope = SchedulingScope.Week;
+			serviceConfig.SchedulingRules[0].Days = new[] { (int)DateTime.Now.DayOfWeek + 1 };
+			serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour - 1, 0, 0);
+			CreateProfile(4, serviceConfig, schedulerConfig);
+
 			PrintConfig(schedulerConfig);
 			#endregion
 
@@ -633,6 +641,42 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			}
 
 			Debug.WriteLine(DateTime.Now + ": Finish workflow test");
+		}
+
+		/// <summary>
+		/// Test for same services for the same profiles for the same time
+		/// all services should be scheduled
+		/// </summary>
+		[TestMethod]
+		public void TestSameServices()
+		{
+			Debug.WriteLine("Current time=" + DateTime.Now);
+
+			var env = CreateEnvironment();
+			var schedulerConfig = GenerateBaseSchedulerConfig();
+
+			#region Config - service outside the timeframe
+
+			// create service and profile
+			var serviceConfig = CreateServiceConfig("service1", schedulerConfig);
+			serviceConfig.SchedulingRules[0].Times[0] = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+			var profile = CreateProfile(1, null, schedulerConfig);
+
+			// add 4 services to the profile
+			profile.Services.Add(GetProfileConfiguration(serviceConfig, profile));
+			profile.Services.Add(GetProfileConfiguration(serviceConfig, profile));
+			profile.Services.Add(GetProfileConfiguration(serviceConfig, profile));
+			profile.Services.Add(GetProfileConfiguration(serviceConfig, profile));
+
+			PrintConfig(schedulerConfig);
+			#endregion
+
+			var scheduler = new Scheduler(env, schedulerConfig);
+			scheduler.Schedule();
+
+			// assert if was inserted into scheduled or unscheduled
+			Assert.IsTrue(scheduler.ScheduledServices.Count == 4);
+			Assert.IsTrue(scheduler.UnscheduledServices.Count == 0);
 		}
 
 		/// <summary>
@@ -1598,7 +1642,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		private ServiceConfiguration GetProfileConfiguration(ServiceConfiguration serviceConfig, ServiceProfile profile)
 		{
 			var config = profile.DeriveConfiguration(serviceConfig);
-			config.ConfigurationID = GetGuidFromString(String.Format("{0}-{1}",profile.Name, serviceConfig.ServiceName));
+			config.ConfigurationID = GetGuidFromString(String.Format("{0}-{1}-{2}",profile.Name, serviceConfig.ServiceName, profile.Services.Count + 1));
 			return config;
 		}
 
