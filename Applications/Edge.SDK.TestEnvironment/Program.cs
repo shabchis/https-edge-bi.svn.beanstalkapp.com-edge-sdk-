@@ -29,7 +29,7 @@ namespace Edge.SDK.TestEnvironment
 				SP_InstanceActiveListGet = "Service_InstanceActiveList_GetByTime"
 			};
 
-			var environment = ServiceEnvironment.Open(envConfig);
+			var environment = ServiceEnvironment.Open("Environment Test",envConfig);
 			var host = new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment);
 
 			Log.Write("TestEnvironment", "Started Environment", LogMessageType.Debug);
