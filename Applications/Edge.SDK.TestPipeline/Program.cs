@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
 using Edge.Core;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
+using Edge.Data.Pipeline;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
@@ -10,24 +15,24 @@ namespace Edge.SDK.TestPipeline
 {
 	class Program
 	{
+		#region Processor type
 		public enum ProcessorType
 		{
 			Generic,
 			Add
-		}
+		} 
+		#endregion
 
+		#region Main
 		static void Main()
 		{
 			// change processor type to test Generic or Add processor types
 			const ProcessorType testProccessorType = ProcessorType.Generic;
 
 			var environment = CreateEnvironment();
+			Clean(environment);
 
-			// wprkflow configuration
-			var workflowConfig = CreatePipelineWorkflowConfiguration(testProccessorType);
-			var profile = new ServiceProfile { Name = "PipelineProfile" };
-			profile.Parameters["AccountID"] = 1;
-			var profileServiceConfig = profile.DeriveConfiguration(workflowConfig);
+			var profileServiceConfig = CreatePipelineWorkflow(testProccessorType);
 
 			using (new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment))
 			{
@@ -47,8 +52,29 @@ namespace Edge.SDK.TestPipeline
 			}
 		}
 
+		
+		#endregion
+
 		#region Configuration
-		private static ServiceConfiguration CreatePipelineWorkflowConfiguration(ProcessorType type)
+		private static ServiceConfiguration CreatePipelineWorkflow(ProcessorType type)
+		{
+			var workflowConfig = CreateBaseWorkflow(type);
+
+			var profile = new ServiceProfile { Name = "PipelineProfile" };
+			profile.Parameters["AccountID"] = 1;
+			profile.Parameters["ChannelID"] = 1;
+			profile.Parameters["FileDirectory"] = "Google";
+			profile.Parameters["DeliveryFileName"] = "temp.txt";
+			profile.Parameters["SourceUrl"] = "http://google.com";
+			profile.Parameters["UsePassive"] = true;
+			profile.Parameters["UseBinary"] = false;
+			profile.Parameters["UserID"] = "edgedev";
+			profile.Parameters["Password"] = "6719AEDC8CD5CC31B9931A7B0CEE1FF7";
+
+			return profile.DeriveConfiguration(workflowConfig);
+		}
+
+		private static ServiceConfiguration CreateBaseWorkflow(ProcessorType type)
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 				{
@@ -72,7 +98,9 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(UrlInitializerService).AssemblyQualifiedName
+				ServiceClass = typeof(UrlInitializerService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1"),
+				TimePeriod = GetTimePeriod()
 			};
 
 			return config;
@@ -82,7 +110,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(UrlRetrieverService).AssemblyQualifiedName
+				ServiceClass = typeof(UrlRetrieverService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1")
 			};
 
 			return config;
@@ -92,9 +121,20 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoGenericMetricsProcessorService).AssemblyQualifiedName
+				ServiceClass = typeof(AutoGenericMetricsProcessorService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1"),
+				DeliveryFileName = "temp.txt",
+				Compression = "None",
+				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
+				MappingConfigPath = "C:\\Development\\Edge.bi\\Files\\temp\\Mappings\\1240\\FtpAdvertising.xml"
 			};
 
+			config.Parameters["ChecksumTheshold"]     = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"]     = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"]  = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["MappingConfigurationElement"] = "Edge.Data.Pipeline.Mapping.MappingConfigurationElement, Edge.Data.Pipeline";
+			
 			return config;
 		}
 
@@ -102,10 +142,22 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoAdMetricsProcessorService).AssemblyQualifiedName
+				ServiceClass = typeof(AutoAdMetricsProcessorService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1")
 			};
 
 			return config;
+		}
+
+		private static DateTimeRange? GetTimePeriod()
+		{
+			var period = new DateTimeRange
+				{
+					TimeZone = "UTC",
+					Start = new DateTimeSpecification {Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now},
+					End   = new DateTimeSpecification {Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddHours(2)}
+				};
+			return period;
 		}
 
 		private static ServiceEnvironment CreateEnvironment()
@@ -131,7 +183,8 @@ namespace Edge.SDK.TestPipeline
 			var environment = ServiceEnvironment.Open("Pipeline Test", envConfig);
 
 			return environment;
-		} 
+		}
+		
 		#endregion
 
 		#region Events
@@ -149,10 +202,34 @@ namespace Edge.SDK.TestPipeline
 			Console.WriteLine("{3} ({4}) -- state: {0}, progress: {1}, outcome: {2}", instance.State, instance.Progress, instance.Outcome, instance.Configuration.ServiceName, instance.InstanceID.ToString("N").Substring(0, 4));
 		}
 
-
 		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
 			Console.WriteLine("     --> " + e.Output);
+		} 
+		#endregion
+
+		#region Helper Functions
+		private static Guid GetGuidFromString(string key)
+		{
+			var md5Hasher = MD5.Create();
+
+			// Convert the input string to a byte array and compute the hash.
+			byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(key));
+			return new Guid(data);
+		}
+
+		private static void Clean(ServiceEnvironment environment)
+		{
+			var env = environment.EnvironmentConfiguration;
+			using (var connection = new SqlConnection(env.ConnectionString))
+			{
+				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
+				{
+					CommandType = CommandType.Text
+				};
+				connection.Open();
+				command.ExecuteNonQuery();
+			}
 		} 
 		#endregion
 	}
