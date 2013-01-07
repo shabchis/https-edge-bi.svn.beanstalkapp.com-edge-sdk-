@@ -61,7 +61,7 @@ namespace Edge.SDK.TestPipeline
 			var workflowConfig = CreateBaseWorkflow(type);
 
 			var profile = new ServiceProfile { Name = "PipelineProfile" };
-			profile.Parameters["AccountID"] = 1;
+			profile.Parameters["AccountID"] = 2;
 			profile.Parameters["ChannelID"] = 1;
 			profile.Parameters["FileDirectory"] = "Google";
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
@@ -84,8 +84,8 @@ namespace Edge.SDK.TestPipeline
 							Mode = WorkflowNodeGroupMode.Linear,
 							Nodes = new LockableList<WorkflowNode>
 								{
-									new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = type == ProcessorType.Generic ? GetGenericProcessorConfig() : GetAdProcessorConfig()},
 								}
 						}
@@ -126,15 +126,18 @@ namespace Edge.SDK.TestPipeline
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
-				MappingConfigPath = "C:\\Development\\Edge.bi\\Files\\temp\\Mappings\\1240\\FtpAdvertising.xml"
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice.xml"
 			};
 
+			// TODO shirat - check if should be a part of configuration class and not parameters
 			config.Parameters["ChecksumTheshold"]     = "0.1";
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"]     = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"]  = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["MappingConfigurationElement"] = "Edge.Data.Pipeline.Mapping.MappingConfigurationElement, Edge.Data.Pipeline";
-			
+			config.Parameters["CsvDelimeter"] = "\t";
+			config.Parameters["CsvRequiredColumns"] = "Day_Code";
+			config.Parameters["CsvEncoding"] = "ASCII";
+
 			return config;
 		}
 
