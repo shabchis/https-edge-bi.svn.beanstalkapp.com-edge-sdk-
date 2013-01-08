@@ -102,6 +102,7 @@ namespace Edge.SDK.TestPipeline
 				DeliveryID = GetGuidFromString("Delivery1"),
 				TimePeriod = GetTimePeriod()
 			};
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
@@ -113,6 +114,7 @@ namespace Edge.SDK.TestPipeline
 				ServiceClass = typeof(UrlRetrieverService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery1")
 			};
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
@@ -137,7 +139,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["CsvDelimeter"] = "\t";
 			config.Parameters["CsvRequiredColumns"] = "Day_Code";
 			config.Parameters["CsvEncoding"] = "ASCII";
-
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			
 			return config;
 		}
 
