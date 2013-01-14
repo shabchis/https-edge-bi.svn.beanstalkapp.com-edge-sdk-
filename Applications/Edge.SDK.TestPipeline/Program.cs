@@ -128,7 +128,8 @@ namespace Edge.SDK.TestPipeline
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice.xml"
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice.xml",
+				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice_sample.txt"
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
