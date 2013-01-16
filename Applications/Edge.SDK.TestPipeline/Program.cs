@@ -19,7 +19,7 @@ namespace Edge.SDK.TestPipeline
 		public enum ProcessorType
 		{
 			Generic,
-			Add
+			Ad
 		} 
 		#endregion
 
@@ -27,7 +27,7 @@ namespace Edge.SDK.TestPipeline
 		static void Main()
 		{
 			// change processor type to test Generic or Add processor types
-			const ProcessorType testProccessorType = ProcessorType.Generic;
+			const ProcessorType testProccessorType = ProcessorType.Ad;
 
 			var environment = CreateEnvironment();
 			Clean(environment);
@@ -52,7 +52,6 @@ namespace Edge.SDK.TestPipeline
 			}
 		}
 
-		
 		#endregion
 
 		#region Configuration
@@ -61,7 +60,7 @@ namespace Edge.SDK.TestPipeline
 			var workflowConfig = CreateBaseWorkflow(type);
 
 			var profile = new ServiceProfile { Name = "PipelineProfile" };
-			profile.Parameters["AccountID"] = 2;
+			profile.Parameters["AccountID"] = 3;
 			profile.Parameters["ChannelID"] = 1;
 			profile.Parameters["FileDirectory"] = "Google";
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
@@ -149,11 +148,34 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoAdMetricsProcessorService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1")
+				ServiceClass = typeof(AutoGenericMetricsProcessorService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1"),
+				DeliveryFileName = "temp.txt",
+				Compression = "None",
+				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
 			};
 
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["CsvDelimeter"] = "\t";
+			config.Parameters["CsvRequiredColumns"] = "Day_Code";
+			config.Parameters["CsvEncoding"] = "ASCII";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+
 			return config;
+			
+			//var config = new AutoMetricsProcessorServiceConfiguration
+			//{
+			//	ServiceClass = typeof(AutoAdMetricsProcessorService).AssemblyQualifiedName,
+			//	DeliveryID = GetGuidFromString("Delivery1")
+			//};
+
+			//return config;
 		}
 
 		private static DateTimeRange? GetTimePeriod()
