@@ -122,7 +122,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoGenericMetricsProcessorService).AssemblyQualifiedName,
+				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery1"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
@@ -148,7 +148,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoGenericMetricsProcessorService).AssemblyQualifiedName,
+				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery1"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
