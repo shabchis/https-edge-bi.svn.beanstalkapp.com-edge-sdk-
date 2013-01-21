@@ -6,6 +6,7 @@ using System.Text;
 using Edge.Core;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
+using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
@@ -249,15 +250,24 @@ namespace Edge.SDK.TestPipeline
 
 		private static void Clean(ServiceEnvironment environment)
 		{
-			var env = environment.EnvironmentConfiguration;
-			using (var connection = new SqlConnection(env.ConnectionString))
+			// delete service events
+			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
 			{
+				connection.Open();
 				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
 				{
 					CommandType = CommandType.Text
 				};
-				connection.Open();
 				command.ExecuteNonQuery();
+			}
+			// delete previous delivery tables
+			using (var deliveryConnection = new SqlConnection("Data Source=bi_rnd;Initial Catalog=EdgeDeliveries;Integrated Security=true"))
+			{
+				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
+				cmd.Parameters.AddWithValue("@TableInitial", "2__");
+				cmd.Connection = deliveryConnection;
+				deliveryConnection.Open();
+				cmd.ExecuteNonQuery();
 			}
 		} 
 		#endregion
