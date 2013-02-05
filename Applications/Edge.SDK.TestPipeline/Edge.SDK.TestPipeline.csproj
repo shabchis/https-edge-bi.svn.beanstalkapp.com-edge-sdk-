@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ProcessorService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -53,6 +54,10 @@
     <ProjectReference Include="..\..\..\edge-framework\Edge.Core\branches\3.0.0\Edge.Core.csproj">
       <Project>{76f5133e-50cd-4282-97e0-b431facb3acc}</Project>
       <Name>Edge.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Objects\trunk\Edge.Data.Objects.csproj">
+      <Project>{9bc787c7-c269-476b-a87c-e345e7db9e23}</Project>
+      <Name>Edge.Data.Objects</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics\branches\3.0.0\Edge.Data.Pipeline.Metrics.csproj">
       <Project>{16440453-3ac6-48da-a424-e87ce8de09cf}</Project>
