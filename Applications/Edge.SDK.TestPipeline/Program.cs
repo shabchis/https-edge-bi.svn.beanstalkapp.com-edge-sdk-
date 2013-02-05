@@ -16,24 +16,13 @@ namespace Edge.SDK.TestPipeline
 {
 	class Program
 	{
-		#region Processor type
-		public enum ProcessorType
-		{
-			Generic,
-			Ad
-		} 
-		#endregion
-
 		#region Main
 		static void Main()
 		{
-			// change processor type to test Generic or Add processor types
-			const ProcessorType testProccessorType = ProcessorType.Ad;
-
 			var environment = CreateEnvironment();
 			Clean(environment);
 
-			var profileServiceConfig = CreatePipelineWorkflow(testProccessorType);
+			var profileServiceConfig = CreatePipelineWorkflow();
 
 			using (new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment))
 			{
@@ -56,9 +45,9 @@ namespace Edge.SDK.TestPipeline
 		#endregion
 
 		#region Configuration
-		private static ServiceConfiguration CreatePipelineWorkflow(ProcessorType type)
+		private static ServiceConfiguration CreatePipelineWorkflow()
 		{
-			var workflowConfig = CreateBaseWorkflow(type);
+			var workflowConfig = CreateBaseWorkflow();
 
 			var profile = new ServiceProfile { Name = "PipelineProfile" };
 			profile.Parameters["AccountID"] = 3;
@@ -74,7 +63,7 @@ namespace Edge.SDK.TestPipeline
 			return profile.DeriveConfiguration(workflowConfig);
 		}
 
-		private static ServiceConfiguration CreateBaseWorkflow(ProcessorType type)
+		private static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 				{
@@ -86,7 +75,7 @@ namespace Edge.SDK.TestPipeline
 								{
 									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = type == ProcessorType.Generic ? GetGenericProcessorConfig() : GetAdProcessorConfig()},
+									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 								}
 						}
 				};
@@ -119,33 +108,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetGenericProcessorConfig()
-		{
-			var config = new AutoMetricsProcessorServiceConfiguration
-			{
-				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1"),
-				DeliveryFileName = "temp.txt",
-				Compression = "None",
-				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1239\FtpBackOffice_sample.txt"
-			};
-
-			// TODO shirat - check if should be a part of configuration class and not parameters
-			config.Parameters["ChecksumTheshold"]     = "0.1";
-			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
-			config.Parameters["Sql.StageCommand"]     = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
-			config.Parameters["Sql.RollbackCommand"]  = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["CsvDelimeter"] = "\t";
-			config.Parameters["CsvRequiredColumns"] = "Day_Code";
-			config.Parameters["CsvEncoding"] = "ASCII";
-			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			
-			return config;
-		}
-
-		private static ServiceConfiguration GetAdProcessorConfig()
+		private static ServiceConfiguration GetProcessorConfig()
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
@@ -169,14 +132,6 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
-			
-			//var config = new AutoMetricsProcessorServiceConfiguration
-			//{
-			//	ServiceClass = typeof(AutoAdMetricsProcessorService).AssemblyQualifiedName,
-			//	DeliveryID = GetGuidFromString("Delivery1")
-			//};
-
-			//return config;
 		}
 
 		private static DateTimeRange? GetTimePeriod()
