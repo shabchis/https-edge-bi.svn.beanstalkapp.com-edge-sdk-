@@ -111,48 +111,52 @@ namespace Edge.SDK.TestPipeline
 
 		private static ServiceConfiguration GetProcessorConfig()
 		{
+			//------------------------------------------
 			// FtpAdvertesing sample (account 1006)
-			//var config = new AutoMetricsProcessorServiceConfiguration
-			//{
-			//	ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
-			//	DeliveryID = GetGuidFromString("Delivery1"),
-			//	DeliveryFileName = "temp.txt",
-			//	Compression = "None",
-			//	ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
-				
-			//	MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
-			//	SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
-
-			//};
-
-			//// TODO shirat - check if should be a part of configuration class and not parameters
-			//config.Parameters["ChecksumTheshold"] = "0.1";
-			//config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
-			//config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
-			//config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			//config.Parameters["CsvDelimeter"] = "\t";
-			//config.Parameters["CsvRequiredColumns"] = "Day_Code";
-			//config.Parameters["CsvEncoding"] = "ASCII";
-			//config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-
-			// Google Analytics sample (account 61)
+			//------------------------------------------
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
+				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery1"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
-				ReaderAdapterType = "Edge.Data.Pipeline.JsonDynamicReaderAdapter, Edge.Data.Pipeline",
+				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\Analytics.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\AnalyticsSample"
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
+
 			};
 
+			// TODO shirat - check if should be a part of configuration class and not parameters
 			config.Parameters["ChecksumTheshold"] = "0.1";
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["CsvDelimeter"] = "\t";
+			config.Parameters["CsvRequiredColumns"] = "Day_Code";
+			config.Parameters["CsvEncoding"] = "ASCII";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+
+			//------------------------------------------
+			// Google Analytics sample (account 61)
+			//------------------------------------------
+			//var config = new AutoMetricsProcessorServiceConfiguration
+			//{
+			//	ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
+			//	DeliveryID = GetGuidFromString("Delivery1"),
+			//	DeliveryFileName = "temp.txt",
+			//	Compression = "None",
+			//	ReaderAdapterType = "Edge.Data.Pipeline.JsonDynamicReaderAdapter, Edge.Data.Pipeline",
+
+			//	MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\Analytics.xml",
+			//	SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\AnalyticsSample"
+			//};
+
+			//config.Parameters["ChecksumTheshold"] = "0.1";
+			//config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			//config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			//config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			//config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
