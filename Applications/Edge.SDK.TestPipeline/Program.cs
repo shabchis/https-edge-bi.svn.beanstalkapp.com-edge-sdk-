@@ -11,7 +11,6 @@ using Edge.Data.Pipeline;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.SDK.TestPipeline.Services;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -77,6 +76,7 @@ namespace Edge.SDK.TestPipeline
 									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						}
@@ -158,6 +158,25 @@ namespace Edge.SDK.TestPipeline
 			//config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			//config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			//config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetTransformConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+			};
+
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
@@ -253,15 +272,15 @@ namespace Edge.SDK.TestPipeline
 		private static void Clean(ServiceEnvironment environment)
 		{
 			// delete service events
-			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			{
-				connection.Open();
-				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-				{
-					CommandType = CommandType.Text
-				};
-				command.ExecuteNonQuery();
-			}
+			//using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
+			//{
+			//	connection.Open();
+			//	var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
+			//	{
+			//		CommandType = CommandType.Text
+			//	};
+			//	command.ExecuteNonQuery();
+			//}
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection("Data Source=bi_rnd;Initial Catalog=EdgeDeliveries;Integrated Security=true"))
 			{
