@@ -77,6 +77,7 @@ namespace Edge.SDK.TestPipeline
 									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						}
 				};
@@ -157,6 +158,25 @@ namespace Edge.SDK.TestPipeline
 			//config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			//config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			//config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetStagingConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery1"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+			};
+
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
