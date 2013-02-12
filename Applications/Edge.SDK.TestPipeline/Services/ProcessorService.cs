@@ -59,7 +59,7 @@ namespace Edge.SDK.TestPipeline.Services
 					Mappings.OnFieldRequired = field => reportReader.Current["array"][columns[field]];
 					
 					reportReader.Read();
-					CurrentMetricsUnit = new MetricsUnit();
+					CurrentMetricsUnit = new MetricsUnit { GetEdgeField = GetExtraField };
 					metricsUnitMapping.Apply(CurrentMetricsUnit);
 
 					using (ImportManager = new MetricsDeliveryManager(InstanceID, EdgeTypes, ExtraFields))
@@ -74,7 +74,7 @@ namespace Edge.SDK.TestPipeline.Services
 
 							while (reportReader.Read())
 							{
-								CurrentMetricsUnit = new MetricsUnit();
+								CurrentMetricsUnit = new MetricsUnit { GetEdgeField = GetExtraField };
 								metricsUnitMapping.Apply(CurrentMetricsUnit);
 
 								ProcessMetrics();
