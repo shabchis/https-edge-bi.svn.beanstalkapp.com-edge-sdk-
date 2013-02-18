@@ -62,7 +62,7 @@ namespace Edge.SDK.TestPipeline.Services
 					CurrentMetricsUnit = new MetricsUnit { GetEdgeField = GetExtraField };
 					metricsUnitMapping.Apply(CurrentMetricsUnit);
 
-					using (ImportManager = new MetricsDeliveryManager(InstanceID, EdgeTypes, ExtraFields))
+					using (ImportManager = new MetricsDeliveryManager(InstanceID, EdgeTypes))
 					{
 						ImportManager.BeginImport(Delivery, CurrentMetricsUnit);
 
