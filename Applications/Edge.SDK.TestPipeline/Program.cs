@@ -21,7 +21,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			//Clean(environment);
+			Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -76,7 +76,7 @@ namespace Edge.SDK.TestPipeline
 								{
 									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									//new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
