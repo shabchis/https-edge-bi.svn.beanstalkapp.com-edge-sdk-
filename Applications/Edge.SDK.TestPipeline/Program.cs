@@ -78,7 +78,7 @@ namespace Edge.SDK.TestPipeline
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									//new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
+									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						}
 				};
