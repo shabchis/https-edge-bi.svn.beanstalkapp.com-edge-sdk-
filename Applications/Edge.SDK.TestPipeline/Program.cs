@@ -290,6 +290,9 @@ namespace Edge.SDK.TestPipeline
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();
+
+				cmd = new SqlCommand("DELETE [dbo].[MD_MetricsMetadata]", deliveryConnection);
+				cmd.ExecuteNonQuery();
 			}
 		} 
 		#endregion
