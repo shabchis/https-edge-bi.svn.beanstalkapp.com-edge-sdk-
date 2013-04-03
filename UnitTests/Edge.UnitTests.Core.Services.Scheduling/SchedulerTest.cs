@@ -1127,7 +1127,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 		private void GetStressTestConfig(SchedulerConfiguration schedulerConfig)
 		{
-			var stressHour = 15;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
+			var stressHour = 9;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
 
 			#region Generic Services
 			//-------------------------
