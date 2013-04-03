@@ -4,10 +4,13 @@ using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 using Edge.Core;
+using Edge.Core.Configuration;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
 using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
+using Edge.Data.Pipeline.Metrics.Managers;
+using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
@@ -21,7 +24,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			//Clean(environment);
+			Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -76,7 +79,7 @@ namespace Edge.SDK.TestPipeline
 								{
 									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
@@ -178,7 +181,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-
+			config.Parameters["IdentityInDebug"] = true;
+			
 			return config;
 		}
 
@@ -197,6 +201,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["IdentityInDebug"] = true;
 
 			return config;
 		}
@@ -285,7 +290,7 @@ namespace Edge.SDK.TestPipeline
 			
 			
 			// delete previous delivery tables
-			using (var deliveryConnection = new SqlConnection("Data Source=bi_rnd;Initial Catalog=EdgeDeliveries;Integrated Security=true"))
+			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
 				cmd.Parameters.AddWithValue("@TableInitial", "2__");
