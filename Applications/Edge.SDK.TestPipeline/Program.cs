@@ -22,6 +22,12 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		static void Main()
 		{
+			log4net.Config.XmlConfigurator.Configure();
+			Log.Start();
+
+			Log.Write("TestPipeline", "Starting Pipeline Test", LogMessageType.Debug);
+			
+
 			var environment = CreateEnvironment();
 			// do not clean for transform service
 			Clean(environment);
