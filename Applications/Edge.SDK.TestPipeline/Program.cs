@@ -14,6 +14,8 @@ using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
+using Edge.Data.Pipeline.Metrics.Indentity;
+using LogMessageType = Edge.Core.Utilities.LogMessageType;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -22,6 +24,13 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		static void Main()
 		{
+			// testing objects viewer
+			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
+			//{
+			//	connection.Open();
+			//	var sql = EdgeViewer.GetMetricsView(3, "[DBO].[3__20130410_181916_5f368d7f48490b6484bcc9482b730dba_Metrics]", connection);
+			//}
+
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
 

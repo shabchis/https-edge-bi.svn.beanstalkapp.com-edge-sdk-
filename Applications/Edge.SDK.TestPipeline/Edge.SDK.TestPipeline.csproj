@@ -63,6 +63,10 @@
       <Project>{9bc787c7-c269-476b-a87c-e345e7db9e23}</Project>
       <Name>Edge.Data.Objects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics.Indentity\trunk\Edge.Data.Pipeline.Metrics.Indentity.csproj">
+      <Project>{66c46dde-68b3-4d4f-bab0-b2b35fb6cb3e}</Project>
+      <Name>Edge.Data.Pipeline.Metrics.Indentity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics\branches\3.0.0\Edge.Data.Pipeline.Metrics.csproj">
       <Project>{16440453-3ac6-48da-a424-e87ce8de09cf}</Project>
       <Name>Edge.Data.Pipeline.Metrics</Name>
