@@ -16,6 +16,7 @@ using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
 using Edge.Data.Pipeline.Metrics.Indentity;
 using LogMessageType = Edge.Core.Utilities.LogMessageType;
+using System.Linq;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -24,11 +25,19 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		static void Main()
 		{
-			// testing objects viewer
+			// testing metrics viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
 			//{
 			//	connection.Open();
 			//	var sql = EdgeViewer.GetMetricsView(3, "[DBO].[3__20130410_181916_5f368d7f48490b6484bcc9482b730dba_Metrics]", connection);
+			//}
+
+			// test EdgeTypes inheritence
+			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
+			//{
+			//	connection.Open();
+			//	var edgeTypes = EdgeObjectConfigLoader.LoadEdgeTypes(3, connection);
+			//	var inheritors = EdgeObjectConfigLoader.FindEdgeTypeInheritors(edgeTypes.Values.FirstOrDefault(x => x.TypeID == 1),edgeTypes);
 			//}
 
 			log4net.Config.XmlConfigurator.Configure();
