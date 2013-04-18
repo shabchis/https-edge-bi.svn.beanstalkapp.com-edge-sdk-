@@ -14,16 +14,16 @@ using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.Data.Pipeline.Metrics.Indentity;
-using LogMessageType = Edge.Core.Utilities.LogMessageType;
-using System.Linq;
+using Edge.SDK.TestPipeline.Services;
+using Edge.Services.Google.AdWords;
+using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
 
 namespace Edge.SDK.TestPipeline
 {
-	class Program
+	class TestGoogleAdWords
 	{
 		#region Main
-		static void Main1()
+		static void Main()
 		{
 			// testing metrics viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
@@ -43,7 +43,7 @@ namespace Edge.SDK.TestPipeline
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
 
-			Log.Write("TestPipeline", "Starting Pipeline Test", LogMessageType.Debug);
+			Log.Write("TestGoogleAdWords", "Starting Google Adwords Test", LogMessageType.Debug);
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
@@ -76,7 +76,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var workflowConfig = CreateBaseWorkflow();
 
-			var profile = new ServiceProfile { Name = "PipelineProfile" };
+			var profile = new ServiceProfile { Name = "GoogleProfile" };
 			profile.Parameters["AccountID"] = 3;
 			profile.Parameters["ChannelID"] = 1;
 			profile.Parameters["FileDirectory"] = "Google";
@@ -93,21 +93,21 @@ namespace Edge.SDK.TestPipeline
 		private static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
+			{
+				ServiceName = "GoogleAdwordsWorkflow",
+				Workflow = new WorkflowNodeGroup
 				{
-					ServiceName = "PipelineWorkflow",
-					Workflow = new WorkflowNodeGroup
-						{
-							Mode = WorkflowNodeGroupMode.Linear,
-							Nodes = new LockableList<WorkflowNode>
+					Mode = WorkflowNodeGroupMode.Linear,
+					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
-						}
-				};
+				}
+			};
 
 			return workflowConfig;
 		}
@@ -116,11 +116,20 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(UrlInitializerService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1"),
+				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery2"),
 				TimePeriod = GetTimePeriod()
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["FilterDeleted"] = false;
+			config.Parameters["KeywordContentId"] = "111";
+			config.Parameters["Adwords.MccEmail"] = "stam@google.com";
+			config.Parameters["Adwords.ClientID"] = "1000";
+			config.Parameters["SubChannelName"] = "sub";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["IncludeStatus"] = false;
+			config.Parameters["DeveloperToken"] = "aaa";
+			config.Parameters["Adwords.ReportType"] = "KEYWORDS_PERFORMANCE_REPORT|AD_PERFORMANCE_REPORT|PLACEMENT_PERFORMANCE_REPORT";
 
 			return config;
 		}
@@ -129,8 +138,9 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(UrlRetrieverService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1")
+				ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery2"),
+				TimePeriod = GetTimePeriod()
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
@@ -144,15 +154,14 @@ namespace Edge.SDK.TestPipeline
 			//------------------------------------------
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1"),
+				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery2"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
-
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -194,7 +203,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1"),
+				DeliveryID = GetGuidFromString("Delivery2"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 			};
 
@@ -205,7 +214,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["IdentityInDebug"] = false;
-			
+
 			return config;
 		}
 
@@ -214,7 +223,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery1"),
+				DeliveryID = GetGuidFromString("Delivery2"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 			};
 
@@ -233,11 +242,11 @@ namespace Edge.SDK.TestPipeline
 		private static DateTimeRange? GetTimePeriod()
 		{
 			var period = new DateTimeRange
-				{
-					TimeZone = "UTC",
-					Start = new DateTimeSpecification {Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now},
-					End   = new DateTimeSpecification {Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddHours(2)}
-				};
+			{
+				TimeZone = "UTC",
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddHours(2) }
+			};
 			return period;
 		}
 
@@ -265,7 +274,7 @@ namespace Edge.SDK.TestPipeline
 
 			return environment;
 		}
-		
+
 		#endregion
 
 		#region Events
@@ -286,7 +295,7 @@ namespace Edge.SDK.TestPipeline
 		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
 			Console.WriteLine("     --> " + e.Output);
-		} 
+		}
 		#endregion
 
 		#region Helper Functions
@@ -311,8 +320,8 @@ namespace Edge.SDK.TestPipeline
 			//	};
 			//	command.ExecuteNonQuery();
 			//}
-			
-			
+
+
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
 			{
@@ -325,7 +334,7 @@ namespace Edge.SDK.TestPipeline
 				cmd = new SqlCommand("DELETE [dbo].[MD_MetricsMetadata]", deliveryConnection);
 				cmd.ExecuteNonQuery();
 			}
-		} 
+		}
 		#endregion
 	}
 }
