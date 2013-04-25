@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using Edge.Core.Services;
 using Edge.Data.Pipeline.Services;
 
@@ -17,7 +13,7 @@ namespace Edge.SDK.TestPipeline.Services
 				file.Location = Path.Combine(@"C:\Development\Edge.bi\Files\Adwords\Files", file.Name);
 			}
 			Delivery.Save();
-			return ServiceOutcome.Success; ;
+			return ServiceOutcome.Success;
 		}
 	}
 }
