@@ -173,6 +173,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["CsvRequiredColumns"] = "Day_Code";
 			config.Parameters["CsvEncoding"] = "ASCII";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
+			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
 
 			//------------------------------------------
 			// Google Analytics sample (account 61)
