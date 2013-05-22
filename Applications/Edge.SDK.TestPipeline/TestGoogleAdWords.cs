@@ -160,7 +160,7 @@ namespace Edge.SDK.TestPipeline
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\GoogleAdwordsMapping.xml",
 				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
 			};
 
