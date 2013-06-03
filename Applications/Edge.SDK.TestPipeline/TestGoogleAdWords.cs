@@ -93,12 +93,12 @@ namespace Edge.SDK.TestPipeline
 		private static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
-			{
-				ServiceName = "GoogleAdwordsWorkflow",
-				Workflow = new WorkflowNodeGroup
 				{
-					Mode = WorkflowNodeGroupMode.Linear,
-					Nodes = new LockableList<WorkflowNode>
+					ServiceName = "GoogleAdwordsWorkflow",
+					Workflow = new WorkflowNodeGroup
+						{
+							Mode = WorkflowNodeGroupMode.Linear,
+							Nodes = new LockableList<WorkflowNode>
 								{
 									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
@@ -106,9 +106,9 @@ namespace Edge.SDK.TestPipeline
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
-				}
-			};
-
+						},
+					Limits = {MaxExecutionTime = new TimeSpan(0, 3, 0, 0)}
+				};
 			return workflowConfig;
 		}
 
@@ -118,20 +118,22 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery2"),
-				TimePeriod = GetTimePeriod()
+				TimePeriod = GetTimePeriod(),
+				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["FilterDeleted"] = false;
 			config.Parameters["KeywordContentId"] = "111";
-			config.Parameters["Adwords.MccEmail"] = "stam@google.com";
-			config.Parameters["Adwords.ClientID"] = "1000";
+			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
 			config.Parameters["SubChannelName"] = "sub";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IncludeStatus"] = false;
-			config.Parameters["DeveloperToken"] = "aaa";
 			config.Parameters["Adwords.ReportType"] = "KEYWORDS_PERFORMANCE_REPORT|AD_PERFORMANCE_REPORT|PLACEMENT_PERFORMANCE_REPORT";
 			config.Parameters["includeConversionTypes"] = true;
-
+			config.Parameters["includeZeroImpression"] = true;
+			
 			return config;
 		}
 
@@ -139,11 +141,16 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
+				//ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
+				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery2"),
-				TimePeriod = GetTimePeriod()
+				TimePeriod = GetTimePeriod(),
+				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
+			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "508-397-0423";
 
 			return config;
 		}
@@ -156,6 +163,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
 				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
+				Limits = {MaxExecutionTime = new TimeSpan(0, 1, 0, 0)},
 				DeliveryID = GetGuidFromString("Delivery2"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
@@ -206,6 +214,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
+				Limits = {MaxExecutionTime = new TimeSpan(0, 1, 0, 0)},
 				DeliveryID = GetGuidFromString("Delivery2"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 			};
@@ -226,6 +235,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
+				Limits = {MaxExecutionTime = new TimeSpan(0, 1, 0, 0)},
 				DeliveryID = GetGuidFromString("Delivery2"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 			};
@@ -246,9 +256,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				TimeZone = "UTC",
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddHours(2) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-6) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
 			};
 			return period;
 		}
