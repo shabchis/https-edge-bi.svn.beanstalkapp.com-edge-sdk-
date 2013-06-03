@@ -100,8 +100,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
@@ -130,6 +130,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["IncludeStatus"] = false;
 			config.Parameters["DeveloperToken"] = "aaa";
 			config.Parameters["Adwords.ReportType"] = "KEYWORDS_PERFORMANCE_REPORT|AD_PERFORMANCE_REPORT|PLACEMENT_PERFORMANCE_REPORT";
+			config.Parameters["includeConversionTypes"] = true;
 
 			return config;
 		}
