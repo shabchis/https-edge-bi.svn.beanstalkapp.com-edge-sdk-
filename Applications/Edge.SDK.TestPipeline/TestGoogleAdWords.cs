@@ -184,6 +184,10 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
 			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
+			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["Adwords.SubChannelName"] = "subChannel";
+			
 
 			//------------------------------------------
 			// Google Analytics sample (account 61)
