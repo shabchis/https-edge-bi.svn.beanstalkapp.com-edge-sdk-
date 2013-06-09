@@ -14,7 +14,6 @@ using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.SDK.TestPipeline.Services;
 using Edge.Services.Google.AdWords;
 using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
 
@@ -23,6 +22,7 @@ namespace Edge.SDK.TestPipeline
 	class TestGoogleAdWords
 	{
 		#region Main
+
 		static void Main()
 		{
 			// testing metrics viewer
@@ -129,10 +129,98 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
 			config.Parameters["SubChannelName"] = "sub";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["IncludeStatus"] = false;
 			config.Parameters["Adwords.ReportType"] = "KEYWORDS_PERFORMANCE_REPORT|AD_PERFORMANCE_REPORT|PLACEMENT_PERFORMANCE_REPORT";
+			config.Parameters["IncludeStatus"] = true;
 			config.Parameters["includeConversionTypes"] = true;
 			config.Parameters["includeZeroImpression"] = true;
+			config.Parameters["includeDisplaytData"] = true;
+			config.Parameters["Adwords.ReportConfig"] = @"
+<GoogleAdwordsReportConfig>
+  <Report Name='KEYWORDS_PERF' Type='KEYWORDS_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='KeywordText' />
+    <Field Name='KeywordMatchType' />
+	<Field Name='Impressions' />
+	<Field Name='Clicks' />
+	<Field Name='Cost' />
+	<Field Name='Status' />
+	<Field Name='DestinationUrl' />
+	<Field Name='QualityScore' />
+  </Report>
+  <Report Name='KEYWORDS_PERF_Status' Type='KEYWORDS_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+	</Report>
+  <Report Name='AD_PERF' Type='AD_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='Date' />
+    <Field Name='AdType' />
+    <Field Name='AdGroupId' />
+	<Field Name='AdGroupName' />
+	<Field Name='AdGroupStatus' />
+    <Field Name='CampaignId' />
+    <Field Name='CampaignName' />
+    <Field Name='CampaignStatus' />
+    <Field Name='Headline' />
+    <Field Name='Description1' />
+	<Field Name='Description2' />
+	<Field Name='KeywordId' />
+	<Field Name='DisplayUrl' />
+	<Field Name='CreativeDestinationUrl' />
+	<Field Name='AccountTimeZoneId' />
+	<Field Name='AccountCurrencyCode' />
+	<Field Name='Ctr' />
+	<Field Name='Status' />
+	<Field Name='DevicePreference' />
+	<Field Name='Impressions' />
+	<Field Name='Clicks' />
+	<Field Name='Cost' />
+	<Field Name='AveragePosition' />
+	<Field Name='Conversions' />
+	<Field Name='ConversionRate' />
+	<Field Name='ConversionRateManyPerClick' />
+	<Field Name='ConversionsManyPerClick' />
+	<Field Name='ConversionValue' />
+	<Field Name='TotalConvValue' />
+  </Report>
+  <Report Name='AD_PERF_Conv' Type='AD_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='Date' />
+    <Field Name='KeywordId' />
+	<Field Name='ConversionsManyPerClick' />
+	<Field Name='ConversionCategoryName' />
+  </Report>
+  <Report Name='AD_PERF_Status' Type='AD_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='Status' />
+	<Field Name='AdGroupId' />
+	<Field Name='AdGroupName' />
+	<Field Name='AdGroupStatus' />
+	<Field Name='CampaignId' />
+	<Field Name='CampaignName' />
+	<Field Name='CampaignStatus' />
+  </Report>
+  <Report Name='MANAGED_PLAC_PERF' Type='PLACEMENT_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+	<Field Name='DestinationUrl' />
+	<Field Name='PlacementUrl' />
+  </Report>
+  <Report Name='MANAGED_PLAC_PERF_Status' Type='PLACEMENT_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+  </Report>
+</GoogleAdwordsReportConfig>
+
+";
 			
 			return config;
 		}
@@ -260,7 +348,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-6) },
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-2) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
 			};
 			return period;
