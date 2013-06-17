@@ -1,6 +1,11 @@
 ﻿using System;
 using Edge.Core;
 using Edge.Core.Services.Workflow;
+using Edge.Data.Pipeline;
+using Edge.Data.Pipeline.Metrics.Services;
+using Edge.Data.Pipeline.Metrics.Services.Configuration;
+using Edge.Data.Pipeline.Services;
+using Edge.Services.Google.AdWords;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Edge.Core.Services.Scheduling;
 using System.Diagnostics;
@@ -1127,7 +1132,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 
 		private void GetStressTestConfig(SchedulerConfiguration schedulerConfig)
 		{
-			var stressHour = 9;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
+			var stressHour = DateTime.Now.Hour;// DateTime.Now.Hour + 1 < 24 ? DateTime.Now.Hour + 1 : 0;
 
 			#region Generic Services
 			//-------------------------
@@ -1502,6 +1507,323 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		}
 		#endregion
 
+		#region Specific Services Tests
+		/// <summary>
+		/// Full configuration planned within one hour
+		/// </summary>
+		/// <param name="startHost">if to start host to run services or htere is another EXE for env and services</param>
+		[TestMethod]
+		public void TestGoogleAdwords(bool startHost = true)
+		{
+			Debug.WriteLine(DateTime.Now + ": Start stress test");
+
+			var env = CreateEnvironment(startHost: startHost);
+			var schedulerConfig = GenerateBaseSchedulerConfig();
+			schedulerConfig.DefaultExecutionTime = new TimeSpan(1, 0, 0);
+
+			var requestedHour = DateTime.Now.Hour;
+
+			var googleAdwordsConfig = CreateGoogleAdwordsWorkflowServiceConfig("Google.Adwords", schedulerConfig);
+			googleAdwordsConfig.SchedulingRules[0].Times[0] = new TimeSpan(requestedHour, 0, 0);
+			googleAdwordsConfig.SchedulingRules[0].MaxDeviationAfter = new TimeSpan(1, 0, 0);
+
+			var profileEf = CreateProfile(3, null, schedulerConfig, "Bbinary");
+			profileEf.Services.Add(GetProfileConfiguration(googleAdwordsConfig, profileEf));
+
+			PrintConfig(schedulerConfig);
+
+			var scheduler = new Scheduler(env, schedulerConfig);
+			scheduler.Start();
+		}
+
+		private ServiceConfiguration CreateGoogleAdwordsWorkflowServiceConfig(string serviceName, SchedulerConfiguration schedulerConfig)
+		{
+			var workflowConfig = new WorkflowServiceConfiguration
+			{
+				ServiceName = "GoogleAdwordsWorkflow",
+				Workflow = new WorkflowNodeGroup
+				{
+					Mode = WorkflowNodeGroupMode.Linear,
+					Nodes = new LockableList<WorkflowNode>
+								{
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
+								}
+				},
+				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
+			};
+
+			// set default empty scheduling for workflow service
+			workflowConfig.SchedulingRules.Add(new SchedulingRule
+			{
+				Scope = SchedulingScope.Day,
+				Times = new[] { new TimeSpan(0, 0, 0) },
+				Days = new[] { 0 }
+			});
+
+			// add to service list in configuration
+			schedulerConfig.ServiceConfigurationList.Add(workflowConfig);
+
+			return workflowConfig;
+		}
+
+		private static ServiceConfiguration GetInitializerConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery2"),
+				TimePeriod = GetTimePeriod(),
+				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
+			};
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["FilterDeleted"] = false;
+			config.Parameters["KeywordContentId"] = "111";
+			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "313-555-6925";
+			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
+			config.Parameters["SubChannelName"] = "sub";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["Adwords.ReportType"] = "KEYWORDS_PERFORMANCE_REPORT|AD_PERFORMANCE_REPORT|PLACEMENT_PERFORMANCE_REPORT";
+			config.Parameters["IncludeStatus"] = true;
+			config.Parameters["includeConversionTypes"] = true;
+			config.Parameters["includeZeroImpression"] = true;
+			config.Parameters["includeDisplaytData"] = true;
+			config.Parameters["Adwords.ReportConfig"] = @"
+<GoogleAdwordsReportConfig>
+  <Report Name='KEYWORDS_PERF' Type='KEYWORDS_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='KeywordText' />
+    <Field Name='KeywordMatchType' />
+	<Field Name='Impressions' />
+	<Field Name='Clicks' />
+	<Field Name='Cost' />
+	<Field Name='Status' />
+	<Field Name='DestinationUrl' />
+	<Field Name='QualityScore' />
+  </Report>
+  <Report Name='KEYWORDS_PERF_Status' Type='KEYWORDS_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+	</Report>
+  <Report Name='AD_PERF' Type='AD_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='Date' />
+    <Field Name='AdType' />
+    <Field Name='AdGroupId' />
+	<Field Name='AdGroupName' />
+	<Field Name='AdGroupStatus' />
+    <Field Name='CampaignId' />
+    <Field Name='CampaignName' />
+    <Field Name='CampaignStatus' />
+    <Field Name='Headline' />
+    <Field Name='Description1' />
+	<Field Name='Description2' />
+	<Field Name='KeywordId' />
+	<Field Name='DisplayUrl' />
+	<Field Name='CreativeDestinationUrl' />
+	<Field Name='AccountTimeZoneId' />
+	<Field Name='AccountCurrencyCode' />
+	<Field Name='Ctr' />
+	<Field Name='Status' />
+	<Field Name='DevicePreference' />
+	<Field Name='Impressions' />
+	<Field Name='Clicks' />
+	<Field Name='Cost' />
+	<Field Name='AveragePosition' />
+	<Field Name='Conversions' />
+	<Field Name='ConversionRate' />
+	<Field Name='ConversionRateManyPerClick' />
+	<Field Name='ConversionsManyPerClick' />
+	<Field Name='ConversionValue' />
+	<Field Name='TotalConvValue' />
+  </Report>
+  <Report Name='AD_PERF_Conv' Type='AD_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='Date' />
+    <Field Name='KeywordId' />
+	<Field Name='ConversionsManyPerClick' />
+	<Field Name='ConversionCategoryName' />
+  </Report>
+  <Report Name='AD_PERF_Status' Type='AD_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='Status' />
+	<Field Name='AdGroupId' />
+	<Field Name='AdGroupName' />
+	<Field Name='AdGroupStatus' />
+	<Field Name='CampaignId' />
+	<Field Name='CampaignName' />
+	<Field Name='CampaignStatus' />
+  </Report>
+  <Report Name='MANAGED_PLAC_PERF' Type='PLACEMENT_PERFORMANCE_REPORT' Enable='true'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+	<Field Name='DestinationUrl' />
+	<Field Name='PlacementUrl' />
+  </Report>
+  <Report Name='MANAGED_PLAC_PERF_Status' Type='PLACEMENT_PERFORMANCE_REPORT' Enable='false'>
+    <Field Name='Id' />
+    <Field Name='AdGroupId' />
+    <Field Name='CampaignId' />
+    <Field Name='Status' />
+  </Report>
+</GoogleAdwordsReportConfig>";
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetRetrieverConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				//ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
+				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery2"),
+				TimePeriod = GetTimePeriod(),
+				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
+			};
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
+			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "313-555-6925";
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetProcessorConfig()
+		{
+			//------------------------------------------
+			// FtpAdvertesing sample (account 1006)
+			//------------------------------------------
+			var config = new AutoMetricsProcessorServiceConfiguration
+			{
+				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
+				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
+				DeliveryID = GetGuidFromString("Delivery2"),
+				DeliveryFileName = "temp.txt",
+				Compression = "None",
+				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
+
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\GoogleAdwordsMapping.xml",
+				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
+			};
+
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["CsvDelimeter"] = "\t";
+			config.Parameters["CsvRequiredColumns"] = "Day_Code";
+			config.Parameters["CsvEncoding"] = "ASCII";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
+			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
+			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["Adwords.SubChannelName"] = "subChannel";
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetTransformConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
+				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
+				DeliveryID = GetGuidFromString("Delivery2"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+			};
+
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["IdentityInDebug"] = false;
+
+			return config;
+		}
+
+		private static ServiceConfiguration GetStagingConfig()
+		{
+			var config = new PipelineServiceConfiguration
+			{
+				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
+				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
+				DeliveryID = GetGuidFromString("Delivery2"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+			};
+
+			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["ChecksumTheshold"] = "0.1";
+			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
+			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
+			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
+			config.Parameters["IdentityInDebug"] = false;
+			//config.Parameters["CreateNewEdgeObjects"] = false;
+
+			return config;
+		}
+
+		private static DateTimeRange? GetTimePeriod()
+		{
+			var period = new DateTimeRange
+			{
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-31) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
+			};
+			return period;
+		}
+
+		/// <summary>
+		/// Test Google Adwords service using Scheduler
+		/// </summary>
+		/// <param name="serviceConfig"></param>
+		/// <param name="startHost">if to start host to run services or htere is another EXE for env and services</param>
+		[TestMethod]
+		public void TestGoogleAdwords(ServiceConfiguration serviceConfig, bool startHost = true)
+		{
+			Debug.WriteLine(DateTime.Now + ": Start Google Adwrods test");
+
+			// create env and base schedule config
+			var env = CreateEnvironment(startHost: startHost);
+			var schedulerConfig = GenerateBaseSchedulerConfig();
+			
+			// add schedule rule to service
+			serviceConfig.SchedulingRules.Add(new SchedulingRule
+			{
+				Scope = SchedulingScope.Day,
+				Times = new[] { new TimeSpan(13, 0, 0) },
+				Days = new[] { 0 },
+				MaxDeviationAfter = new TimeSpan(10, 0, 0)
+			});
+
+			schedulerConfig.Profiles.Add(serviceConfig.Profile);
+			serviceConfig.Profile.Services.Add(GetProfileConfiguration(serviceConfig, serviceConfig.Profile));
+
+			// add service to scheduler list
+			schedulerConfig.ServiceConfigurationList.Add(serviceConfig);
+			PrintConfig(schedulerConfig);
+
+			// start scheduler
+			var scheduler = new Scheduler(env, schedulerConfig);
+			scheduler.Start();
+		}
+		#endregion
+
 		#region Private Help Functions
 		private SchedulerConfiguration GenerateBaseSchedulerConfig()
 		{
@@ -1515,7 +1837,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 					ExecuteInterval = new TimeSpan(0, 0, 1),
 					CheckUnplannedServicesInterval = new TimeSpan(0, 0, 5),
 					ExecutionStatisticsRefreshInterval = new TimeSpan(0, 10, 0),
-					DefaultExecutionTime = new TimeSpan(0, 3, 0),
+					DefaultExecutionTime = new TimeSpan(1, 3, 0),
 					ServiceConfigurationList = new List<ServiceConfiguration>(),
 					Profiles = new ProfilesCollection()
 				};
@@ -1628,6 +1950,8 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 		{
 			var profile = new ServiceProfile { Name =  String.Format("{0}-{1}", profileName, accountId)};
 			profile.Parameters["AccountID"] = accountId;
+			profile.Parameters["ChannelID"] = 1;
+			profile.Parameters["FileDirectory"] = "Google";
 
 			if (serviceConfig != null)
 			{
@@ -1668,7 +1992,7 @@ namespace Edge.UnitTests.Core.Services.Scheduling
 			Thread.Sleep(10000);
 		}
 
-		private Guid GetGuidFromString(string key)
+		private static Guid GetGuidFromString(string key)
 		{
 			MD5 md5Hasher = MD5.Create();
 
