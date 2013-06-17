@@ -53,6 +53,26 @@
       <Project>{76F5133E-50CD-4282-97E0-B431FACB3ACC}</Project>
       <Name>Edge.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Objects\trunk\Edge.Data.Objects.csproj">
+      <Project>{9bc787c7-c269-476b-a87c-e345e7db9e23}</Project>
+      <Name>Edge.Data.Objects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics.Indentity\trunk\Edge.Data.Pipeline.Metrics.Indentity.csproj">
+      <Project>{66c46dde-68b3-4d4f-bab0-b2b35fb6cb3e}</Project>
+      <Name>Edge.Data.Pipeline.Metrics.Indentity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics\branches\3.0.0\Edge.Data.Pipeline.Metrics.csproj">
+      <Project>{16440453-3ac6-48da-a424-e87ce8de09cf}</Project>
+      <Name>Edge.Data.Pipeline.Metrics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline\branches\3.0.0\Edge.Data.Pipeline.csproj">
+      <Project>{53391a99-e8ca-4262-a8e0-5f05a1cc6608}</Project>
+      <Name>Edge.Data.Pipeline</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-services\Edge.Services.Google.AdWords\branches\3.0.0.0\Edge.Services.Google.AdWords\Edge.Services.Google.AdWords.csproj">
+      <Project>{452f5585-4de6-431b-b691-2ce4ec06e49a}</Project>
+      <Name>Edge.Services.Google.AdWords</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UnitTests\Edge.UnitTests.Core.Services.Scheduling\Edge.UnitTests.Core.Services.Scheduling.csproj">
       <Project>{6bde278a-3725-4bbb-8484-d87e7c567213}</Project>
       <Name>Edge.UnitTests.Core.Services.Scheduling</Name>

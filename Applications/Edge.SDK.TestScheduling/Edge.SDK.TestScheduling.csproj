@@ -58,6 +58,10 @@
       <Project>{76f5133e-50cd-4282-97e0-b431facb3acc}</Project>
       <Name>Edge.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline\branches\3.0.0\Edge.Data.Pipeline.csproj">
+      <Project>{53391a99-e8ca-4262-a8e0-5f05a1cc6608}</Project>
+      <Name>Edge.Data.Pipeline</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UnitTests\Edge.UnitTests.Core.Services.Scheduling\Edge.UnitTests.Core.Services.Scheduling.csproj">
       <Project>{6bde278a-3725-4bbb-8484-d87e7c567213}</Project>
       <Name>Edge.UnitTests.Core.Services.Scheduling</Name>

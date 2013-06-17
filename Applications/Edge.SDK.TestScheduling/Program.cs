@@ -23,12 +23,17 @@ namespace Edge.SDK.TestScheduling
             //--------------------------------
             // Full Instegration Test
             //-------------------------------
-			test.TestFullIntegration(false);
+			//test.TestFullIntegration(false);
 
 			//--------------------------------
 			// Stress Test
 			//-------------------------------
 			//test.StressTest(false);
+
+			//--------------------------------
+			// Google Adwords Test
+			//-------------------------------
+			test.TestGoogleAdwords(false);
 
 			Log.Write("TestScheduling", "Started Scheduling Test", LogMessageType.Debug);
 
