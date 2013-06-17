@@ -71,6 +71,18 @@
       <Project>{76f5133e-50cd-4282-97e0-b431facb3acc}</Project>
       <Name>Edge.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline.Metrics\branches\3.0.0\Edge.Data.Pipeline.Metrics.csproj">
+      <Project>{16440453-3AC6-48DA-A424-E87CE8DE09CF}</Project>
+      <Name>Edge.Data.Pipeline.Metrics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline\branches\3.0.0\Edge.Data.Pipeline.csproj">
+      <Project>{53391A99-E8CA-4262-A8E0-5F05A1CC6608}</Project>
+      <Name>Edge.Data.Pipeline</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-services\Edge.Services.Google.AdWords\branches\3.0.0.0\Edge.Services.Google.AdWords\Edge.Services.Google.AdWords.csproj">
+      <Project>{452F5585-4DE6-431B-B691-2CE4EC06E49A}</Project>
+      <Name>Edge.Services.Google.AdWords</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
