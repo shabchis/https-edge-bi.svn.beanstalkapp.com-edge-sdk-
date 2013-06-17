@@ -19,7 +19,7 @@ using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
 
 namespace Edge.SDK.TestPipeline
 {
-	class TestGoogleAdWords
+	public class TestGoogleAdWords
 	{
 		#region Main
 
@@ -72,7 +72,7 @@ namespace Edge.SDK.TestPipeline
 		#endregion
 
 		#region Configuration
-		private static ServiceConfiguration CreatePipelineWorkflow()
+		public static ServiceConfiguration CreatePipelineWorkflow()
 		{
 			var workflowConfig = CreateBaseWorkflow();
 
@@ -90,7 +90,7 @@ namespace Edge.SDK.TestPipeline
 			return profile.DeriveConfiguration(workflowConfig);
 		}
 
-		private static ServiceConfiguration CreateBaseWorkflow()
+		public static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 				{
@@ -233,7 +233,7 @@ namespace Edge.SDK.TestPipeline
 				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery2"),
 				TimePeriod = GetTimePeriod(),
-				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
+				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
@@ -251,7 +251,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
 				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
-				Limits = {MaxExecutionTime = new TimeSpan(0, 1, 0, 0)},
+				Limits = {MaxExecutionTime = new TimeSpan(0, 2, 0, 0)},
 				DeliveryID = GetGuidFromString("Delivery2"),
 				DeliveryFileName = "temp.txt",
 				Compression = "None",
@@ -306,7 +306,7 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
-				Limits = {MaxExecutionTime = new TimeSpan(0, 1, 0, 0)},
+				Limits = {MaxExecutionTime = new TimeSpan(0, 2, 0, 0)},
 				DeliveryID = GetGuidFromString("Delivery2"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
 			};
