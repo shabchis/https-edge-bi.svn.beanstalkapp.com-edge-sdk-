@@ -49,8 +49,10 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\MyEasyForexBackofficeRetrieverService.cs" />
     <Compile Include="Services\MyGoogleAdWordsRetrieverService.cs" />
     <Compile Include="Services\ProcessorService.cs" />
+    <Compile Include="TestEasyForexBackoffice.cs" />
     <Compile Include="TestGoogleAdWords.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +78,10 @@
     <ProjectReference Include="..\..\..\edge-framework\Edge.Data.Pipeline\branches\3.0.0\Edge.Data.Pipeline.csproj">
       <Project>{53391a99-e8ca-4262-a8e0-5f05a1cc6608}</Project>
       <Name>Edge.Data.Pipeline</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-services\Edge.Services.BackOffice.EasyForex\branches\3.0.0.0\Edge.Services.BackOffice.EasyForex.csproj">
+      <Project>{adc1e54c-4487-40b2-a2aa-ece3853ced89}</Project>
+      <Name>Edge.Services.BackOffice.EasyForex</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\edge-services\Edge.Services.Google.AdWords\branches\3.0.0.0\Edge.Services.Google.AdWords\Edge.Services.Google.AdWords.csproj">
       <Project>{452F5585-4DE6-431B-B691-2CE4EC06E49A}</Project>
