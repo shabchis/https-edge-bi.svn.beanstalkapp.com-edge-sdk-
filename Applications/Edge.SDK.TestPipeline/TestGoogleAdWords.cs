@@ -23,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main2()
+		static void Main()
 		{
 			// testing metrics viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
@@ -47,7 +47,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			Clean(environment);
+			//Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -77,7 +77,7 @@ namespace Edge.SDK.TestPipeline
 			var workflowConfig = CreateBaseWorkflow();
 
 			var profile = new ServiceProfile { Name = "GoogleProfile" };
-			profile.Parameters["AccountID"] = 3;
+			profile.Parameters["AccountID"] = 7;
 			profile.Parameters["ChannelID"] = 1;
 			profile.Parameters["FileDirectory"] = "Google";
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
@@ -100,9 +100,9 @@ namespace Edge.SDK.TestPipeline
 							Mode = WorkflowNodeGroupMode.Linear,
 							Nodes = new LockableList<WorkflowNode>
 								{
-									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
@@ -124,8 +124,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["FilterDeleted"] = false;
 			config.Parameters["KeywordContentId"] = "111";
-			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "323-509-6780";
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
 			config.Parameters["SubChannelName"] = "sub";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
@@ -237,17 +237,14 @@ namespace Edge.SDK.TestPipeline
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
-			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "323-509-6780";
 
 			return config;
 		}
 
 		private static ServiceConfiguration GetProcessorConfig()
 		{
-			//------------------------------------------
-			// FtpAdvertesing sample (account 1006)
-			//------------------------------------------
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
 				ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
@@ -272,31 +269,9 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
 			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
-			config.Parameters["Adwords.MccEmail"] = "edge.bi.mcc@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "508-397-0423";
+			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
+			config.Parameters["Adwords.ClientID"] = "323-509-6780";
 			config.Parameters["Adwords.SubChannelName"] = "subChannel";
-			
-
-			//------------------------------------------
-			// Google Analytics sample (account 61)
-			//------------------------------------------
-			//var config = new AutoMetricsProcessorServiceConfiguration
-			//{
-			//	ServiceClass = typeof(ProcessorService).AssemblyQualifiedName,
-			//	DeliveryID = GetGuidFromString("Delivery1"),
-			//	DeliveryFileName = "temp.txt",
-			//	Compression = "None",
-			//	ReaderAdapterType = "Edge.Data.Pipeline.JsonDynamicReaderAdapter, Edge.Data.Pipeline",
-
-			//	MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\Analytics.xml",
-			//	SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\61\AnalyticsSample"
-			//};
-
-			//config.Parameters["ChecksumTheshold"] = "0.1";
-			//config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
-			//config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
-			//config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			//config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
 		}
@@ -348,7 +323,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-2) },
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-5) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
 			};
 			return period;
