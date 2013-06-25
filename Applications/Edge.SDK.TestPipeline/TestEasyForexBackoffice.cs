@@ -24,7 +24,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main()
+		static void Main3()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -109,6 +109,17 @@ namespace Edge.SDK.TestPipeline
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
+			config.Parameters["SourceUrl"] = "https://classic.easy-forex.com/BackOffice/API/Marketing.asmx";
+			config.Parameters["SOAPAction"] = "http://www.easy-forex.com/GetGatewayStatistics";
+			config.Parameters["SoapMethod"] = "GetGatewayStatistics";
+			config.Parameters["StartGid"] = "1";
+			config.Parameters["EndGid"] = "1000000";
+			config.Parameters["User"] = "Seperia";
+			config.Parameters["Pass"] = "B0D003A2CB1865E33AFD79CFD8761BA8";
+			config.Parameters["FileDirectory"] = "EasyForexBackoffice";
+			config.Parameters["Bo.Xpath"] ="Envelope/Body/GetGatewayStatisticsResponse/GetGatewayStatisticsResult/diffgram/DSMarketing/CampaignStatisticsForEasyNet";
+			config.Parameters["Bo.IsAttribute"] = "false";
+			config.Parameters["Bo.TrackerIDField"] = "GID";
 
 			return config;
 		}
@@ -117,8 +128,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				//ServiceClass = typeof(Edge.Services.BackOffice.EasyForex.RetrieverService).AssemblyQualifiedName,
-				ServiceClass = typeof(MyEasyForexBackofficeRetrieverService).AssemblyQualifiedName,
+				ServiceClass = typeof(Edge.Services.BackOffice.EasyForex.RetrieverService).AssemblyQualifiedName,
+				//ServiceClass = typeof(MyEasyForexBackofficeRetrieverService).AssemblyQualifiedName,
 				DeliveryID = GetGuidFromString("Delivery7"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
@@ -135,9 +146,9 @@ namespace Edge.SDK.TestPipeline
 				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
 				DeliveryID = GetGuidFromString("Delivery7"),
-				DeliveryFileName = "temp.txt",
+				DeliveryFileName = "EasyForexBackOffice",
 				Compression = "None",
-				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
+				ReaderAdapterType = "Edge.Data.Pipeline.XmlDynamicReaderAdapter, Edge.Data.Pipeline",
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
 				SampleFilePath = @"C:\Development\Edge.bi\Files\EasyForex\Samples\EasyForexBackoffice-sample"
 			};
@@ -147,9 +158,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["CsvDelimeter"] = "\t";
-			config.Parameters["CsvRequiredColumns"] = "Day_Code";
-			config.Parameters["CsvEncoding"] = "ASCII";
+			config.Parameters["XPath"] = "Envelope/Body/GetGatewayStatisticsResponse/GetGatewayStatisticsResult/diffgram/DSMarketing/CampaignStatisticsForEasyNet";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
@@ -161,7 +170,7 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery2"),
+				DeliveryID = GetGuidFromString("Delivery7"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
 			};
 
@@ -182,7 +191,7 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery2"),
+				DeliveryID = GetGuidFromString("Delivery7"),
 				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
 			};
 
@@ -201,8 +210,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-1) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
 		}
