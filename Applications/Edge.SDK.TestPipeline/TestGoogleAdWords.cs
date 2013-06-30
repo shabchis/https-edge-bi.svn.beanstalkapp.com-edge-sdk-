@@ -29,7 +29,7 @@ namespace Edge.SDK.TestPipeline
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
 			//{
 			//	connection.Open();
-			//	Edge.Data.Pipeline.Metrics.Indentity.EdgeViewer.GetObjectsView(3, connection, null);
+			//	Data.Pipeline.Metrics.Indentity.EdgeViewer.GetObjectsView(7, connection, null);
 			//}
 
 			// testing metrics viewer
