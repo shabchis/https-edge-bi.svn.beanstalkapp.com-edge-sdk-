@@ -23,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main3()
+		static void Main()
 		{
 			// testing objects viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
@@ -54,7 +54,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			//Clean(environment);
+			Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -330,7 +330,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-5) },
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-1) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
 			};
 			return period;
@@ -412,7 +412,7 @@ namespace Edge.SDK.TestPipeline
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "3__");
+				cmd.Parameters.AddWithValue("@TableInitial", "7__");
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();
