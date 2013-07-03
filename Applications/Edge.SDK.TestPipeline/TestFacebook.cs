@@ -14,20 +14,21 @@ using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.Services.Google.AdWords;
+using Edge.SDK.TestPipeline.Services;
+using Edge.Services.Facebook.GraphApi;
 
 namespace Edge.SDK.TestPipeline
 {
-	public class TestObjectsUpdate
+	public class TestFacebook
 	{
 		#region Main
 
-		static void Main4()
+		static void Main()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
 
-			Log.Write("TestGoogleAdWords", "Starting Google Adwords Test", LogMessageType.Debug);
+			Log.Write("TestEasyForexBackoffice", "Starting Easy Forex Backoffice Test", LogMessageType.Debug);
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
@@ -60,10 +61,10 @@ namespace Edge.SDK.TestPipeline
 		{
 			var workflowConfig = CreateBaseWorkflow();
 
-			var profile = new ServiceProfile { Name = "GoogleProfile" };
+			var profile = new ServiceProfile { Name = "EasyForexProfile" };
 			profile.Parameters["AccountID"] = 7;
 			profile.Parameters["ChannelID"] = 1;
-			profile.Parameters["FileDirectory"] = "Google";
+			profile.Parameters["FileDirectory"] = "EasyForex";
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
 			profile.Parameters["SourceUrl"] = "http://google.com";
 			profile.Parameters["UsePassive"] = true;
@@ -84,11 +85,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -101,32 +102,17 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				DeliveryID = GetGuidFromString("Delivery7_Facebook"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["FilterDeleted"] = false;
-			config.Parameters["KeywordContentId"] = "111";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
-			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
-			config.Parameters["SubChannelName"] = "sub";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["includeZeroImpression"] = true;
-			//config.Parameters["IncludeStatus"] = true;  
-			//config.Parameters["includeConversionTypes"] = true;
-			//config.Parameters["includeDisplaytData"] = true;
-			config.Parameters["Adwords.ReportConfig"] = @"
-<GoogleAdwordsReportConfig>
-  <Report Name='CAMPAIGN_STATUS' Type='CAMPAIGN_PERFORMANCE_REPORT' Enable='true'>
-    <Field Name='CampaignId' />
-    <Field Name='CampaignName' />
-    <Field Name='CampaignStatus' />
-    <Field Name='TotalBudget' />
-  </Report>
-</GoogleAdwordsReportConfig>
-";
+			config.Parameters["Facebook.Account.ID"] = "52081533";
+			config.Parameters["TimeZone"] = "-8";
+			config.Parameters["Offset"] = "0";
+			config.Parameters["Facebook.BaseServiceAdress"] = "https://graph.facebook.com";
+			config.Parameters["FileDirectory"] = "EasyForexFacebook";
 			return config;
 		}
 
@@ -134,34 +120,30 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				//ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
 				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				//ServiceClass = typeof(MyEasyForexBackofficeRetrieverService).AssemblyQualifiedName,
+				DeliveryID = GetGuidFromString("Delivery7_Facebook"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
-
+			config.Parameters["Facebook.AccessToken"] = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";
+            
 			return config;
 		}
 
 		private static ServiceConfiguration GetProcessorConfig()
 		{
-
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
+				ServiceClass = typeof(Edge.Services.Facebook.GraphApi.ProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				DeliveryFileName = "CAMPAIGN_STATUS",
-				Compression = "Gzip",
-				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
-
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\CampaignStatusMapping.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\CampaignStatus_sample.txt"
+				DeliveryID = GetGuidFromString("Delivery7_Facebook"),
+				DeliveryFileName = "EasyForexBackOffice",
+				Compression = "None",
+				ReaderAdapterType = "Edge.Data.Pipeline.XmlDynamicReaderAdapter, Edge.Data.Pipeline",
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
+				SampleFilePath = @"C:\Development\Edge.bi\Files\EasyForex\Samples\EasyForexBackoffice-sample"
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -169,17 +151,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["CsvDelimeter"] = ",";
-			config.Parameters["CsvRequiredColumns"] = "Campaign";
-			config.Parameters["CsvEncoding"] = "ASCII";
+			config.Parameters["XPath"] = "Envelope/Body/GetGatewayStatisticsResponse/GetGatewayStatisticsResult/diffgram/DSMarketing/CampaignStatisticsForEasyNet";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
-			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
-			config.Parameters["Adwords.SubChannelName"] = "subChannel";
-			config.Parameters["EOF"] = "Total";
-			config.Parameters["EOF_FieldName"] = "Campaign ID";
 
 			return config;
 		}
@@ -190,8 +163,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetGuidFromString("Delivery7_Facebook"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -200,7 +173,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = true;
+			config.Parameters["IdentityInDebug"] = false;
 
 			return config;
 		}
@@ -211,8 +184,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetGuidFromString("Delivery7_Facebook"),
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -221,8 +194,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = true;
-			//config.Parameters["CreateNewEdgeObjects"] = false;
+			config.Parameters["IdentityInDebug"] = false;
 
 			return config;
 		}
@@ -231,8 +203,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-1) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = new DateTime(2013, 4, 4, 0, 0, 0) }, //DateTime.Today.AddDays(-1) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = new DateTime(2013, 4, 4, 23, 59, 59) }, //DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
 		}
@@ -310,10 +282,10 @@ namespace Edge.SDK.TestPipeline
 
 
 			// delete previous delivery tables
-			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
+			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Edge.Data.Pipeline.Metrics.Misc.Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "7__");
+				cmd.Parameters.AddWithValue("@TableInitial", "3__");
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();
