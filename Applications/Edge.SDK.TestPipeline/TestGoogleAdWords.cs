@@ -25,6 +25,13 @@ namespace Edge.SDK.TestPipeline
 
 		static void Main()
 		{
+			// test stage data 
+			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
+			//{
+			//	connection.Open();
+			//	Data.Pipeline.Metrics.Indentity.EdgeViewer.StageMetrics(7, "[DBO].[7__20130703_181234_b1f321e43dd65129b514c55c124466f0_Metrics]", "aaa", connection);
+			//}
+			//throw new Exception();
 			// testing objects viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
 			//{
