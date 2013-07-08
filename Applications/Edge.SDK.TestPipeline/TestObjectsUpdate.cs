@@ -22,7 +22,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main4()
+		static void Main()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -84,8 +84,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
@@ -124,6 +124,7 @@ namespace Edge.SDK.TestPipeline
     <Field Name='CampaignName' />
     <Field Name='CampaignStatus' />
     <Field Name='TotalBudget' />
+	<Field Name='Period' />
   </Report>
 </GoogleAdwordsReportConfig>
 ";

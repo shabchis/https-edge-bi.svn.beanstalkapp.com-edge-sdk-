@@ -23,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main()
+		static void Main3()
 		{
 			// test stage data 
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
