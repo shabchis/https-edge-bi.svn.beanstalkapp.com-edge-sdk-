@@ -24,7 +24,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main3()
+		static void Main4()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -89,8 +89,8 @@ namespace Edge.SDK.TestPipeline
 									new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
 									new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -292,7 +292,7 @@ namespace Edge.SDK.TestPipeline
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "3__");
+				cmd.Parameters.AddWithValue("@TableInitial", "7__");
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();

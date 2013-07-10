@@ -23,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main3()
+		static void Main()
 		{
 			// test stage data 
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
@@ -36,7 +36,7 @@ namespace Edge.SDK.TestPipeline
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
 			//{
 			//	connection.Open();
-			//	Data.Pipeline.Metrics.Indentity.EdgeViewer.GetObjectsView(7, "7_MetricsAdwords_new", connection, null);
+			//	Data.Pipeline.Metrics.Indentity.EdgeViewer.GetObjectsView(7, "7_Metrics_Search", connection, null);
 			//}
 			// testing metrics viewer
 			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
@@ -60,7 +60,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			//Clean(environment);
+			Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -115,8 +115,8 @@ namespace Edge.SDK.TestPipeline
 								{
 									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						},

@@ -22,7 +22,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main()
+		static void Main2()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
