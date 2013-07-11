@@ -60,7 +60,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			Clean(environment);
+			//Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -115,8 +115,8 @@ namespace Edge.SDK.TestPipeline
 								{
 									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						},
@@ -224,6 +224,7 @@ namespace Edge.SDK.TestPipeline
     <Field Name='Status' />
 	<Field Name='DestinationUrl' />
 	<Field Name='PlacementUrl' />
+	<Field Name='Clicks' />
   </Report>
   <Report Name='MANAGED_PLAC_PERF_Status' Type='PLACEMENT_PERFORMANCE_REPORT' Enable='false'>
     <Field Name='Id' />
@@ -232,9 +233,7 @@ namespace Edge.SDK.TestPipeline
     <Field Name='Status' />
   </Report>
 </GoogleAdwordsReportConfig>
-
 ";
-			
 			return config;
 		}
 
@@ -281,6 +280,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["CsvEncoding"] = "ASCII";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
+			config.Parameters["PlacementSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Placement_sample.txt";
 			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
 			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
 			config.Parameters["Adwords.ClientID"] = "323-509-6780";
