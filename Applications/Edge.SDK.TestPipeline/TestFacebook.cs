@@ -23,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main5()
+		static void Main()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -85,11 +85,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "EasyForexFacebookInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "EasyForexFacebookRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "EasyForexFacebookProcessor", ServiceConfiguration = GetProcessorConfig()},
+									//new WorkflowStep {Name = "EasyForexFacebookTrasform", ServiceConfiguration = GetTransformConfig()},
+									//new WorkflowStep {Name = "EasyForexFacebookStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -142,11 +142,15 @@ namespace Edge.SDK.TestPipeline
 				DeliveryFileName = "EasyForexBackOffice",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.XmlDynamicReaderAdapter, Edge.Data.Pipeline",
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\EasyForex\Samples\EasyForexBackoffice-sample"
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\Facebook\Mapping\FacebookMapping.xml",
+				SampleFilePath    =  @"C:\Development\Edge.bi\Files\Facebook\samples\AdGroupStats-sample.json"
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
+			config.Parameters["CreativeSampleFile"] = @"C:\Development\Edge.bi\Files\Facebook\samples\AdGroupsCreatives-sample.json";
+			config.Parameters["CampaignSampleFile"] = @"C:\Development\Edge.bi\Files\Facebook\samples\Campaigns-sample.json";
+			config.Parameters["AdGroupSampleFile"]  = @"C:\Development\Edge.bi\Files\Facebook\samples\AdGroups-sample.json";
+
 			config.Parameters["ChecksumTheshold"] = "0.1";
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
@@ -270,22 +274,22 @@ namespace Edge.SDK.TestPipeline
 		private static void Clean(ServiceEnvironment environment)
 		{
 			// delete service events
-			//using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			//{
-			//	connection.Open();
-			//	var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-			//	{
-			//		CommandType = CommandType.Text
-			//	};
-			//	command.ExecuteNonQuery();
-			//}
+			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
+			{
+				connection.Open();
+				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
+				{
+					CommandType = CommandType.Text
+				};
+				command.ExecuteNonQuery();
+			}
 
 
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Edge.Data.Pipeline.Metrics.Misc.Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "3__");
+				cmd.Parameters.AddWithValue("@TableInitial", "7__");
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();
