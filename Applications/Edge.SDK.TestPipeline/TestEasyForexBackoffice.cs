@@ -33,7 +33,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			Clean(environment);
+			Clean(environment, true);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -86,11 +86,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
-									//new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									//new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -180,7 +180,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = false;
+			config.Parameters["IdentityInDebug"] = true;
 
 			return config;
 		}
@@ -201,7 +201,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = false;
+			config.Parameters["IdentityInDebug"] = true;
 
 			return config;
 		}
@@ -274,19 +274,20 @@ namespace Edge.SDK.TestPipeline
 			return new Guid(data);
 		}
 
-		private static void Clean(ServiceEnvironment environment)
+		private static void Clean(ServiceEnvironment environment, bool eventsOnly)
 		{
 			// delete service events
-			//using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			//{
-			//	connection.Open();
-			//	var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-			//	{
-			//		CommandType = CommandType.Text
-			//	};
-			//	command.ExecuteNonQuery();
-			//}
+			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
+			{
+				connection.Open();
+				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
+				{
+					CommandType = CommandType.Text
+				};
+				command.ExecuteNonQuery();
+			}
 
+			if (eventsOnly) return;
 
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
