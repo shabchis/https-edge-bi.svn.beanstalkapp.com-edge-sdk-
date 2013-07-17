@@ -14,9 +14,6 @@ using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.SDK.TestPipeline.Services;
-using Edge.Services.Google.AdWords;
-using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -24,7 +21,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		static void Main4()
+		public static void Test()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -33,7 +30,7 @@ namespace Edge.SDK.TestPipeline
 
 			var environment = CreateEnvironment();
 			// do not clean for transform service
-			Clean(environment, true);
+			Clean(environment);
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -86,9 +83,9 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
 								}
@@ -210,8 +207,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-4) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-4) }
 			};
 			return period;
 		}
@@ -274,7 +271,7 @@ namespace Edge.SDK.TestPipeline
 			return new Guid(data);
 		}
 
-		private static void Clean(ServiceEnvironment environment, bool eventsOnly)
+		private static void Clean(ServiceEnvironment environment)
 		{
 			// delete service events
 			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
@@ -286,8 +283,6 @@ namespace Edge.SDK.TestPipeline
 				};
 				command.ExecuteNonQuery();
 			}
-
-			if (eventsOnly) return;
 
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))

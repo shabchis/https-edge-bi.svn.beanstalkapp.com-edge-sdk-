@@ -10,11 +10,9 @@ using Edge.Core.Services.Workflow;
 using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
 using Edge.Data.Pipeline.Metrics.Managers;
-using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.SDK.TestPipeline.Services;
 using Edge.Services.Facebook.GraphApi;
 
 namespace Edge.SDK.TestPipeline
@@ -22,8 +20,7 @@ namespace Edge.SDK.TestPipeline
 	public class TestFacebook
 	{
 		#region Main
-
-		static void Main()
+		public static void Test()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -53,11 +50,10 @@ namespace Edge.SDK.TestPipeline
 				}
 			}
 		}
-
 		#endregion
 
 		#region Configuration
-		public static ServiceConfiguration CreatePipelineWorkflow()
+		private static ServiceConfiguration CreatePipelineWorkflow()
 		{
 			var workflowConfig = CreateBaseWorkflow();
 
@@ -75,7 +71,7 @@ namespace Edge.SDK.TestPipeline
 			return profile.DeriveConfiguration(workflowConfig);
 		}
 
-		public static ServiceConfiguration CreateBaseWorkflow()
+		private static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
@@ -85,11 +81,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "EasyForexFacebookInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "EasyForexFacebookRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "EasyForexFacebookInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "EasyForexFacebookRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "EasyForexFacebookProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "EasyForexFacebookTrasform", ServiceConfiguration = GetTransformConfig()},
-									//new WorkflowStep {Name = "EasyForexFacebookStaging", ServiceConfiguration = GetStagingConfig()},
+									new WorkflowStep {Name = "EasyForexFacebookTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "EasyForexFacebookStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -177,7 +173,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = false;
+			config.Parameters["IdentityInDebug"] = true;
 
 			return config;
 		}
@@ -198,7 +194,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["IdentityInDebug"] = false;
+			config.Parameters["IdentityInDebug"] = true;
 
 			return config;
 		}
@@ -207,8 +203,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = new DateTime(2013, 4, 4, 0, 0, 0) }, //DateTime.Today.AddDays(-1) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = new DateTime(2013, 4, 4, 23, 59, 59) }, //DateTime.Today.AddSeconds(-1) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
 		}
@@ -283,7 +279,6 @@ namespace Edge.SDK.TestPipeline
 				};
 				command.ExecuteNonQuery();
 			}
-
 
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Edge.Data.Pipeline.Metrics.Misc.Consts.ConnectionStrings.Deliveries)))

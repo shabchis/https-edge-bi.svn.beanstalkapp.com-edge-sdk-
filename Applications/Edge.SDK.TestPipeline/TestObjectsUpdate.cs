@@ -21,8 +21,7 @@ namespace Edge.SDK.TestPipeline
 	public class TestObjectsUpdate
 	{
 		#region Main
-
-		static void Main2()
+		public static void Test()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -52,11 +51,10 @@ namespace Edge.SDK.TestPipeline
 				}
 			}
 		}
-
 		#endregion
 
 		#region Configuration
-		public static ServiceConfiguration CreatePipelineWorkflow()
+		private static ServiceConfiguration CreatePipelineWorkflow()
 		{
 			var workflowConfig = CreateBaseWorkflow();
 
@@ -74,7 +72,7 @@ namespace Edge.SDK.TestPipeline
 			return profile.DeriveConfiguration(workflowConfig);
 		}
 
-		public static ServiceConfiguration CreateBaseWorkflow()
+		private static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
@@ -299,16 +297,15 @@ namespace Edge.SDK.TestPipeline
 		private static void Clean(ServiceEnvironment environment)
 		{
 			// delete service events
-			//using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			//{
-			//	connection.Open();
-			//	var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-			//	{
-			//		CommandType = CommandType.Text
-			//	};
-			//	command.ExecuteNonQuery();
-			//}
-
+			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
+			{
+				connection.Open();
+				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
+				{
+					CommandType = CommandType.Text
+				};
+				command.ExecuteNonQuery();
+			}
 
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
