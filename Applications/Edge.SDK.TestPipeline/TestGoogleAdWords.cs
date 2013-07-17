@@ -19,7 +19,7 @@ using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
 
 namespace Edge.SDK.TestPipeline
 {
-	public class TestGoogleAdWords
+	public class TestGoogleAdWords : BaseTest
 	{
 		#region Main
 		public static void Test()
@@ -58,8 +58,9 @@ namespace Edge.SDK.TestPipeline
 			Log.Write("TestGoogleAdWords", "Starting Google Adwords Test", LogMessageType.Debug);
 
 			var environment = CreateEnvironment();
-			// do not clean for transform service
-			//Clean(environment);
+			CleanEnv(environment);
+			// do not clean for transform or/and staging service
+			CleanDelivery();
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -111,10 +112,10 @@ namespace Edge.SDK.TestPipeline
 							Mode = WorkflowNodeGroupMode.Linear,
 							Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						},
@@ -334,7 +335,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-4) },
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-2) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-2) }
 			};
 			return period;
@@ -385,44 +386,6 @@ namespace Edge.SDK.TestPipeline
 		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
 			Console.WriteLine("     --> " + e.Output);
-		}
-		#endregion
-
-		#region Helper Functions
-		private static Guid GetGuidFromString(string key)
-		{
-			var md5Hasher = MD5.Create();
-
-			// Convert the input string to a byte array and compute the hash.
-			byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(key));
-			return new Guid(data);
-		}
-
-		private static void Clean(ServiceEnvironment environment)
-		{
-			// delete service events
-			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			{
-				connection.Open();
-				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-				{
-					CommandType = CommandType.Text
-				};
-				command.ExecuteNonQuery();
-			}
-
-			// delete previous delivery tables
-			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
-			{
-				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "7__");
-				cmd.Connection = deliveryConnection;
-				deliveryConnection.Open();
-				cmd.ExecuteNonQuery();
-
-				cmd = new SqlCommand("DELETE [dbo].[MD_MetricsMetadata]", deliveryConnection);
-				cmd.ExecuteNonQuery();
-			}
 		}
 		#endregion
 	}

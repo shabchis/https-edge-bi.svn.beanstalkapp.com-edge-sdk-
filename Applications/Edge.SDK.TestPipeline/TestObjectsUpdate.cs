@@ -18,7 +18,7 @@ using Edge.Services.Google.AdWords;
 
 namespace Edge.SDK.TestPipeline
 {
-	public class TestObjectsUpdate
+	public class TestObjectsUpdate : BaseTest
 	{
 		#region Main
 		public static void Test()
@@ -29,8 +29,9 @@ namespace Edge.SDK.TestPipeline
 			Log.Write("TestGoogleAdWords", "Starting Google Adwords Test", LogMessageType.Debug);
 
 			var environment = CreateEnvironment();
+			CleanEnv(environment);
 			// do not clean for transform service
-			Clean(environment);
+			CleanDelivery();
 
 			var profileServiceConfig = CreatePipelineWorkflow();
 
@@ -281,44 +282,6 @@ namespace Edge.SDK.TestPipeline
 		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
 		{
 			Console.WriteLine("     --> " + e.Output);
-		}
-		#endregion
-
-		#region Helper Functions
-		private static Guid GetGuidFromString(string key)
-		{
-			var md5Hasher = MD5.Create();
-
-			// Convert the input string to a byte array and compute the hash.
-			byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(key));
-			return new Guid(data);
-		}
-
-		private static void Clean(ServiceEnvironment environment)
-		{
-			// delete service events
-			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
-			{
-				connection.Open();
-				var command = new SqlCommand("delete from [EdgeSystem].[dbo].ServiceEnvironmentEvent where TimeStarted >= '2013-01-01 00:00:00.000'", connection)
-				{
-					CommandType = CommandType.Text
-				};
-				command.ExecuteNonQuery();
-			}
-
-			// delete previous delivery tables
-			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
-			{
-				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "7__");
-				cmd.Connection = deliveryConnection;
-				deliveryConnection.Open();
-				cmd.ExecuteNonQuery();
-
-				cmd = new SqlCommand("DELETE [dbo].[MD_MetricsMetadata]", deliveryConnection);
-				cmd.ExecuteNonQuery();
-			}
 		}
 		#endregion
 	}
