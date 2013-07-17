@@ -54,6 +54,7 @@
     <Compile Include="Services\ProcessorService.cs" />
     <Compile Include="TestEasyForexBackoffice.cs" />
     <Compile Include="TestFacebook.cs" />
+    <Compile Include="TestFtpAdvertising.cs" />
     <Compile Include="TestGoogleAdWords.cs" />
     <Compile Include="TestObjectsUpdate.cs" />
   </ItemGroup>
