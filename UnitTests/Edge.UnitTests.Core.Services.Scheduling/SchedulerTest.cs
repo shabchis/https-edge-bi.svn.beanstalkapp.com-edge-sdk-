@@ -6,6 +6,7 @@ using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
 using Edge.Services.Google.AdWords;
+using Edge.Services.Google.AdWords.Performance;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Edge.Core.Services.Scheduling;
 using System.Diagnostics;
