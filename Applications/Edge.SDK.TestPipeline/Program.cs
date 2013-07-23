@@ -10,7 +10,9 @@
 
 			//TestFtpAdvertising.Test();
 
-			TestGoogleAdWords.Test();
+			//TestGoogleAdWords.Test();
+			
+			TestGoogleAdwordsSettings.Test();
 
 			//TestObjectsUpdate.Test();
 		}

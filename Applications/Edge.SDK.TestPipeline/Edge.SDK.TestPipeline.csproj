@@ -57,6 +57,7 @@
     <Compile Include="TestFacebook.cs" />
     <Compile Include="TestFtpAdvertising.cs" />
     <Compile Include="TestGoogleAdWords.cs" />
+    <Compile Include="TestGoogleAdwordsSettings.cs" />
     <Compile Include="TestObjectsUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
