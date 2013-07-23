@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Security.Cryptography;
-using System.Text;
 using Edge.Core;
-using Edge.Core.Configuration;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
 using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
-using Edge.Data.Pipeline.Metrics.Managers;
-using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
-using Edge.Services.Google.AdWords;
-using ProcessorService = Edge.Services.Google.AdWords.ProcessorService;
+using Edge.Services.Google.AdWords.Performance;
+using ProcessorService = Edge.Services.Google.AdWords.Performance.ProcessorService;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -115,8 +108,8 @@ namespace Edge.SDK.TestPipeline
 									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 						},
 					Limits = {MaxExecutionTime = new TimeSpan(0, 3, 0, 0)}
@@ -335,8 +328,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-2) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-2) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Now.AddDays(-1) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Now.AddDays(-1) }
 			};
 			return period;
 		}
