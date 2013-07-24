@@ -76,11 +76,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									new WorkflowStep {Name = "GoogleAdwordsSettingTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									new WorkflowStep {Name = "GoogleAdwordsSettingTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsSettingTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsSettingTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsSettingTestStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsSettingTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "GoogleAdwordsSettingTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsSettingTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsSettingTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsSettingTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -107,6 +107,7 @@ namespace Edge.SDK.TestPipeline
   <Report Name='CampaignCriterion' Type='CampaignCriterion' Filter='LOCATION|LANGUAGE' Enable='true'>
     <Field Name='Id' />
     <Field Name='CriteriaType' />
+    <Field Name='IsNegative' />
     <Field Name='CampaignId' />
     <Field Name='LanguageCode' />
     <Field Name='LanguageName' />
@@ -140,15 +141,15 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
-				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
+				ServiceClass = typeof(CampaignCriterionProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
 				DeliveryID = GetGuidFromString("Delivery7_Settings"),
-				DeliveryFileName = "temp.txt",
+				DeliveryFileName = "CampaignCriterion",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\GoogleAdwordsMapping.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\bBinary_Sample.txt"
+				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\CampaignCriterionMapping.xml",
+				SampleFilePath = ""
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -156,16 +157,10 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["CsvDelimeter"] = "\t";
-			config.Parameters["CsvRequiredColumns"] = "Day_Code";
+			config.Parameters["CsvDelimeter"] = ",";
+			config.Parameters["CsvRequiredColumns"] = "Id";
 			config.Parameters["CsvEncoding"] = "ASCII";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
-			config.Parameters["PlacementSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Placement_sample.txt";
-			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
-			config.Parameters["Adwords.SubChannelName"] = "subChannel";
 
 			return config;
 		}
@@ -208,7 +203,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["IdentityInDebug"] = true;
-			//config.Parameters["CreateNewEdgeObjects"] = false;
+			config.Parameters["CreateNewEdgeObjects"] = true;
 
 			return config;
 		}
