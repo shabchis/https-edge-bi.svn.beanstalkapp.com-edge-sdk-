@@ -76,8 +76,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsSettingTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsSettingTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsSettingTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsSettingTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsSettingTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsSettingTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsSettingTestStaging", ServiceConfiguration = GetStagingConfig()},
@@ -203,7 +203,15 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["IdentityInDebug"] = true;
-			config.Parameters["CreateNewEdgeObjects"] = true;
+			config.Parameters["IdentityConfig"] = @"
+<IdentityConfig>
+  <EdgeType Name='Campaign' CreateNewObjects='false'>
+    <FieldToUpdate Name='Location' />
+    <FieldToUpdate Name='IsLocationNegative' />
+    <FieldToUpdate Name='Language' />
+    <FieldToUpdate Name='IsLanguageNegative' />
+  </EdgeType>
+</IdentityConfig>";
 
 			return config;
 		}
