@@ -1,4 +1,5 @@
-﻿namespace Edge.SDK.TestPipeline
+﻿using Edge.Data.Pipeline.Metrics.Indentity;
+namespace Edge.SDK.TestPipeline
 {
 	class Program
 	{
@@ -13,7 +14,7 @@
 			//TestGoogleAdWords.Test();
 			
 			TestGoogleAdwordsSettings.Test();
-
+			
 			//TestObjectsUpdate.Test();
 		}
 	}
