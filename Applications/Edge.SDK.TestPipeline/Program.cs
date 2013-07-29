@@ -11,13 +11,13 @@ namespace Edge.SDK.TestPipeline
 
 			//TestFtpAdvertising.Test();
 
-			//TestGoogleAdWords.Test();
+			TestGoogleAdWords.Test();
 			
 			//TestGoogleAdwordsSettings.Test();
 
 			//TestObjectsUpdate.Test();
 
-			TestGoogleAdwordsGeo.Test();
+			//TestGoogleAdwordsGeo.Test();
 		}
 
 		private void ManulaTests()
