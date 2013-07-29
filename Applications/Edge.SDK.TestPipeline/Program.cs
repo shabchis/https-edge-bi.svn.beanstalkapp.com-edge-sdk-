@@ -13,9 +13,11 @@ namespace Edge.SDK.TestPipeline
 
 			//TestGoogleAdWords.Test();
 			
-			TestGoogleAdwordsSettings.Test();
-			
+			//TestGoogleAdwordsSettings.Test();
+
 			//TestObjectsUpdate.Test();
+
+			TestGoogleAdwordsGeo.Test();
 		}
 	}
 }
