@@ -18,10 +18,10 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		public static void Test()
 		{
-			Init(CreateBaseWorkflow());
-
 			// do not clean for transform or/and staging service
-			//CleanDelivery();
+			CleanDelivery();
+
+			Init(CreateBaseWorkflow());
 		}
 		#endregion
 
@@ -37,9 +37,9 @@ namespace Edge.SDK.TestPipeline
 							Mode = WorkflowNodeGroupMode.Linear,
 							Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
