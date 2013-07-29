@@ -24,10 +24,10 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		public static void Test()
 		{
-			Init(CreateBaseWorkflow());
-
 			// do not clean for transform service
 			CleanDelivery();
+
+			Init(CreateBaseWorkflow());
 		}
 		#endregion
 
@@ -43,8 +43,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
@@ -60,22 +60,19 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				DeliveryID = GetDeliveryId("ObjectsUpdate"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["FilterDeleted"] = false;
 			config.Parameters["KeywordContentId"] = "111";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
+			config.Parameters["Adwords.MccEmail"] = ADWORDS_MCC_EMAIL;
+			config.Parameters["Adwords.ClientID"] = ADWORDS_CLIENT_ID;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
 			config.Parameters["SubChannelName"] = "sub";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["includeZeroImpression"] = true;
-			//config.Parameters["IncludeStatus"] = true;  
-			//config.Parameters["includeConversionTypes"] = true;
-			//config.Parameters["includeDisplaytData"] = true;
 			config.Parameters["Adwords.ReportConfig"] = @"
 <GoogleAdwordsReportConfig>
   <Report Name='CAMPAIGN_STATUS' Type='CAMPAIGN_PERFORMANCE_REPORT' Enable='true'>
@@ -96,14 +93,14 @@ namespace Edge.SDK.TestPipeline
 			{
 				//ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
 				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				DeliveryID = GetDeliveryId("ObjectsUpdate"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
+			config.Parameters["Adwords.MccEmail"] = ADWORDS_MCC_EMAIL;
+			config.Parameters["Adwords.ClientID"] = ADWORDS_CLIENT_ID;
 
 			return config;
 		}
@@ -115,13 +112,13 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
+				DeliveryID = GetDeliveryId("ObjectsUpdate"),
 				DeliveryFileName = "CAMPAIGN_STATUS",
 				Compression = "Gzip",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\CampaignStatusMapping.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\CampaignStatus_sample.txt"
+				MappingConfigPath = String.Format(@"C:\Development\Edge.bi\Files\_Mapping\{0}\CampaignStatusMapping.xml", ACCOUNT_ID),
+				SampleFilePath = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\CampaignStatus_sample.txt", ACCOUNT_ID)
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -133,10 +130,8 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["CsvRequiredColumns"] = "Campaign";
 			config.Parameters["CsvEncoding"] = "ASCII";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["KeywordSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Keyword_sample.txt";
-			config.Parameters["AdSampleFile"] = @"C:\Development\Edge.bi\Files\Adwords\Files\samples\Ad_sample.txt";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
+			config.Parameters["Adwords.MccEmail"] = ADWORDS_MCC_EMAIL;
+			config.Parameters["Adwords.ClientID"] = ADWORDS_CLIENT_ID;
 			config.Parameters["Adwords.SubChannelName"] = "subChannel";
 			config.Parameters["EOF"] = "Total";
 			config.Parameters["EOF_FieldName"] = "Campaign ID";
@@ -150,8 +145,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetDeliveryId("ObjectsUpdate"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -171,8 +166,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetDeliveryId("ObjectsUpdate"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -182,7 +177,6 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["IdentityInDebug"] = true;
-			//config.Parameters["CreateNewEdgeObjects"] = false;
 
 			return config;
 		}

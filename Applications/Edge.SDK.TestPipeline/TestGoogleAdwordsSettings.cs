@@ -16,10 +16,10 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		public static void Test()
 		{
-			Init(CreateBaseWorkflow());
-
 			// do not clean for transform service
 			CleanDelivery();
+
+			Init(CreateBaseWorkflow());
 		}
 		#endregion
 
@@ -52,13 +52,13 @@ namespace Edge.SDK.TestPipeline
 			var config = new PipelineServiceConfiguration
 			{
 				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7_Settings"),
+				DeliveryID = GetDeliveryId("Settings"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
+			config.Parameters["Adwords.MccEmail"] = ADWORDS_MCC_EMAIL;
+			config.Parameters["Adwords.ClientID"] = ADWORDS_CLIENT_ID;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
 			config.Parameters["Adwords.ReportConfig"] = @"
@@ -84,14 +84,14 @@ namespace Edge.SDK.TestPipeline
 			{
 				//ServiceClass = typeof(MyGoogleAdWordsRetrieverService).AssemblyQualifiedName,
 				ServiceClass = typeof(RetrieverService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7_Settings"),
+				DeliveryID = GetDeliveryId("Settings"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["DeveloperToken"] = "5eCsvAOU06Fs4j5qHWKTCA";
-			config.Parameters["Adwords.MccEmail"] = "ppc.easynet@gmail.com";
-			config.Parameters["Adwords.ClientID"] = "323-509-6780";
+			config.Parameters["Adwords.MccEmail"] = ADWORDS_MCC_EMAIL;
+			config.Parameters["Adwords.ClientID"] = ADWORDS_CLIENT_ID;
 
 			return config;
 		}
@@ -102,12 +102,12 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(CampaignCriterionProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7_Settings"),
+				DeliveryID = GetDeliveryId("Settings"),
 				DeliveryFileName = "CampaignCriterion",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.CsvDynamicReaderAdapter, Edge.Data.Pipeline",
 
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\Adwords\Mapping\CampaignCriterionMapping.xml",
+				MappingConfigPath = String.Format(@"C:\Development\Edge.bi\Files\_Mapping\{0}\CampaignCriterionMapping.xml", ACCOUNT_ID),
 				SampleFilePath = ""
 			};
 
@@ -130,8 +130,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7_Settings"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetDeliveryId("Settings"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -151,8 +151,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7_Settings"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\temp\Mappings\1006\FtpAdvertising.xml",
+				DeliveryID = GetDeliveryId("Settings"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
