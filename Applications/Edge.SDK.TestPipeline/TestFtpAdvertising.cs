@@ -24,71 +24,14 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		public static void Test()
 		{
-			// testing metrics viewer
-			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
-			//{
-			//	connection.Open();
-			//	var sql = EdgeViewer.GetMetricsView(3, "[DBO].[3__20130410_181916_5f368d7f48490b6484bcc9482b730dba_Metrics]", connection);
-			//}
+			Init(CreateBaseWorkflow());
 
-			// test EdgeTypes inheritence
-			//using (var connection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Objects)))
-			//{
-			//	connection.Open();
-			//	var edgeTypes = EdgeObjectConfigLoader.LoadEdgeTypes(3, connection);
-			//	var inheritors = EdgeObjectConfigLoader.FindEdgeTypeInheritors(edgeTypes.Values.FirstOrDefault(x => x.TypeID == 1),edgeTypes);
-			//}
-
-			log4net.Config.XmlConfigurator.Configure();
-			Log.Start();
-
-			Log.Write("TestPipeline", "Starting Pipeline Test", LogMessageType.Debug);
-
-			var environment = CreateEnvironment();
-			CleanEnv(environment);
 			// do not clean for transform service
 			CleanDelivery();
-
-			var profileServiceConfig = CreatePipelineWorkflow();
-
-			using (new ServiceExecutionHost(environment.EnvironmentConfiguration.DefaultHostName, environment))
-			{
-				using (var listener = environment.ListenForEvents(ServiceEnvironmentEventType.ServiceRequiresScheduling))
-				{
-					listener.ServiceRequiresScheduling += Environment_ServiceRequiresScheduling;
-
-					do
-					{
-						// create and start service
-						var instance = environment.NewServiceInstance(profileServiceConfig);
-						instance.StateChanged += instance_StateChanged;
-						instance.OutputGenerated += instance_OutputGenerated;
-						instance.Start();
-					} while (Console.ReadKey().Key != ConsoleKey.Escape);
-				}
-			}
 		}
-
 		#endregion
 
 		#region Configuration
-		private static ServiceConfiguration CreatePipelineWorkflow()
-		{
-			var workflowConfig = CreateBaseWorkflow();
-
-			var profile = new ServiceProfile { Name = "PipelineProfile" };
-			profile.Parameters["AccountID"] = 3;
-			profile.Parameters["ChannelID"] = 1;
-			profile.Parameters["FileDirectory"] = "Google";
-			profile.Parameters["DeliveryFileName"] = "temp.txt";
-			profile.Parameters["SourceUrl"] = "http://google.com";
-			profile.Parameters["UsePassive"] = true;
-			profile.Parameters["UseBinary"] = false;
-			profile.Parameters["UserID"] = "edgedev";
-			profile.Parameters["Password"] = "6719AEDC8CD5CC31B9931A7B0CEE1FF7";
-
-			return profile.DeriveConfiguration(workflowConfig);
-		}
 
 		private static ServiceConfiguration CreateBaseWorkflow()
 		{
@@ -241,52 +184,6 @@ namespace Edge.SDK.TestPipeline
 			return period;
 		}
 
-		private static ServiceEnvironment CreateEnvironment()
-		{
-			// create service env
-			var envConfig = new ServiceEnvironmentConfiguration
-			{
-				DefaultHostName = "Shira",
-				ConnectionString = "Data Source=bi_rnd;Initial Catalog=EdgeSystem;Integrated Security=true",
-				SP_HostListGet = "Service_HostList",
-				SP_HostRegister = "Service_HostRegister",
-				SP_HostUnregister = "Service_HostUnregister",
-				SP_InstanceSave = "Service_InstanceSave",
-				SP_InstanceGet = "Service_InstanceGet",
-				SP_InstanceReset = "Service_InstanceReset",
-				SP_EnvironmentEventListenerListGet = "Service_EnvironmentEventListenerListGet",
-				SP_EnvironmentEventListenerRegister = "Service_EnvironmentEventListenerRegister",
-				SP_EnvironmentEventListenerUnregister = "Service_EnvironmentEventListenerUnregister",
-				SP_ServicesExecutionStatistics = "Service_ExecutionStatistics_GetByPercentile",
-				SP_InstanceActiveListGet = "Service_InstanceActiveList_GetByTime"
-			};
-
-			var environment = ServiceEnvironment.Open("Pipeline Test", envConfig);
-
-			return environment;
-		}
-
-		#endregion
-
-		#region Events
-		private static void Environment_ServiceRequiresScheduling(object sender, ServiceInstanceEventArgs e)
-		{
-			Console.WriteLine("     --> child of: {0}", e.ServiceInstance.ParentInstance != null ? e.ServiceInstance.ParentInstance.Configuration.ServiceName : "(no parent)");
-			e.ServiceInstance.StateChanged += instance_StateChanged;
-			e.ServiceInstance.OutputGenerated += instance_OutputGenerated;
-			e.ServiceInstance.Start();
-		}
-
-		static void instance_StateChanged(object sender, EventArgs e)
-		{
-			var instance = (ServiceInstance)sender;
-			Console.WriteLine("{3} ({4}) -- state: {0}, progress: {1}, outcome: {2}", instance.State, instance.Progress, instance.Outcome, instance.Configuration.ServiceName, instance.InstanceID.ToString("N").Substring(0, 4));
-		}
-
-		static void instance_OutputGenerated(object sender, ServiceOutputEventArgs e)
-		{
-			Console.WriteLine("     --> " + e.Output);
-		}
 		#endregion
 	}
 }
