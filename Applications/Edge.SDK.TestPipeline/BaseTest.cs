@@ -15,7 +15,19 @@ namespace Edge.SDK.TestPipeline
 {
 	public abstract class BaseTest
 	{
-		protected const int ACCOUNT_ID = 7;
+		// --> EasyForex
+		//protected const int ACCOUNT_ID = 7;
+		//protected const int CHANNEL_ID = 1;
+		//protected const string FILE_DIRECTORY = "GoogleAdwords";
+		//protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		//protected const string ADWORDS_CLIENT_ID = "323-509-6780"; 
+
+		// --> Payoneer
+		protected const int ACCOUNT_ID = 1240244;
+		protected const int CHANNEL_ID = 1;
+		protected const string FILE_DIRECTORY = "GoogleAdwords";
+		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		protected const string ADWORDS_CLIENT_ID = "272-752-0560";   
 
 		#region Helper Functions
 		
@@ -76,10 +88,10 @@ namespace Edge.SDK.TestPipeline
 
 		protected static ServiceConfiguration CreatePipelineWorkflow(ServiceConfiguration workflowConfig)
 		{
-			var profile = new ServiceProfile { Name = "GoogleProfile" };
-			profile.Parameters["AccountID"] = 7;
-			profile.Parameters["ChannelID"] = 1;
-			profile.Parameters["FileDirectory"] = "Google";
+			var profile = new ServiceProfile { Name = "Profile" };
+			profile.Parameters["AccountID"] = ACCOUNT_ID;
+			profile.Parameters["ChannelID"] = CHANNEL_ID;
+			profile.Parameters["FileDirectory"] = FILE_DIRECTORY;
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
 			profile.Parameters["SourceUrl"] = "http://google.com";
 			profile.Parameters["UsePassive"] = true;
@@ -119,7 +131,7 @@ namespace Edge.SDK.TestPipeline
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
 			{
 				var cmd = SqlUtility.CreateCommand("Drop_Delivery_tables", CommandType.StoredProcedure);
-				cmd.Parameters.AddWithValue("@TableInitial", "7__");
+				cmd.Parameters.AddWithValue("@TableInitial", String.Format("{0}_", ACCOUNT_ID));
 				cmd.Connection = deliveryConnection;
 				deliveryConnection.Open();
 				cmd.ExecuteNonQuery();
@@ -127,6 +139,11 @@ namespace Edge.SDK.TestPipeline
 				cmd = new SqlCommand("DELETE [dbo].[MD_MetricsMetadata]", deliveryConnection);
 				cmd.ExecuteNonQuery();
 			}
+		}
+
+		protected static Guid GetDeliveryId(string serviceName = "")
+		{
+			return GetGuidFromString(String.Format("Delivery-{0}-{1}", ACCOUNT_ID, serviceName));
 		}
 		#endregion
 
