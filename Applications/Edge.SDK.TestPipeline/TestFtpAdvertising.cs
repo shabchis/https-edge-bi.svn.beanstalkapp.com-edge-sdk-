@@ -24,10 +24,10 @@ namespace Edge.SDK.TestPipeline
 		#region Main
 		public static void Test()
 		{
-			Init(CreateBaseWorkflow());
-
 			// do not clean for transform service
 			CleanDelivery();
+
+			Init(CreateBaseWorkflow());
 		}
 		#endregion
 

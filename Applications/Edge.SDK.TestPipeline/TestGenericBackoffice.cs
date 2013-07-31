@@ -1,23 +1,20 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Security.Cryptography;
-using System.Text;
-using Edge.Core;
-using Edge.Core.Configuration;
+﻿using Edge.Core;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
-using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
-using Edge.Data.Pipeline.Metrics.Managers;
-using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
+using Edge.SDK.TestPipeline.Services;
+using Edge.Services.BackOffice.Generic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Edge.SDK.TestPipeline
 {
-	public class TestEasyForexBackoffice : BaseTest
+	public class TestGenericBackoffice : BaseTest
 	{
 		#region Main
 
@@ -32,7 +29,7 @@ namespace Edge.SDK.TestPipeline
 		#endregion
 
 		#region Configuration
-		
+
 		public static ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
@@ -43,11 +40,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									new WorkflowStep {Name = "EasyForexBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "EasyForexBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "PayoneerBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
+									//new WorkflowStep {Name = "PayoneerBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "PayoneerBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "PayoneerBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "PayoneerBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -59,24 +56,18 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(Edge.Services.BackOffice.EasyForex.InitializerService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				ServiceClass = typeof(InitializerService).AssemblyQualifiedName,
+				DeliveryID = GetDeliveryId("PayoneerBackoffice"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) }
 			};
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["SourceUrl"] = "https://classic.easy-forex.com/BackOffice/API/Marketing.asmx";
-			config.Parameters["SOAPAction"] = "http://www.easy-forex.com/GetGatewayStatistics";
-			config.Parameters["SoapMethod"] = "GetGatewayStatistics";
-			config.Parameters["StartGid"] = "1";
-			config.Parameters["EndGid"] = "1000000";
-			config.Parameters["User"] = "Seperia";
-			config.Parameters["Pass"] = "B0D003A2CB1865E33AFD79CFD8761BA8";
-			config.Parameters["FileDirectory"] = "EasyForexBackoffice";
-			config.Parameters["Bo.Xpath"] ="Envelope/Body/GetGatewayStatisticsResponse/GetGatewayStatisticsResult/diffgram/DSMarketing/CampaignStatisticsForEasyNet";
-			config.Parameters["Bo.IsAttribute"] = "false";
-			config.Parameters["Bo.TrackerIDField"] = "GID";
+			config.Parameters["Bo.ServiceAdress"] = "https://api.payoneer.com/WebApps/NotificationListener/API.aspx?mname=d2p_sem_statistics&amp;from={0:yyyy-MM-ddTHH:mmZ}&#38;to={1:yyyy-MM-ddTHH:mmZ}&#38;";
+			config.Parameters["Bo.UTCOffest"] = 0;
+			config.Parameters["Bo.Xpath"]="EdgeBI.Metrics/Tracker";
+			config.Parameters["Bo.IsAttribute"] = true;
+			config.Parameters["Bo.TrackerIDField"] = "SEM";
 
 			return config;
 		}
@@ -85,9 +76,9 @@ namespace Edge.SDK.TestPipeline
 		{
 			var config = new PipelineServiceConfiguration
 			{
-				ServiceClass = typeof(Edge.Services.BackOffice.EasyForex.RetrieverService).AssemblyQualifiedName,
-				//ServiceClass = typeof(MyEasyForexBackofficeRetrieverService).AssemblyQualifiedName,
-				DeliveryID = GetGuidFromString("Delivery7"),
+				//ServiceClass = typeof(Edge.Services.BackOffice.EasyForex.RetrieverService).AssemblyQualifiedName,
+				ServiceClass = typeof(MyBackofficeRetrieverService).AssemblyQualifiedName,
+				DeliveryID = GetDeliveryId("PayoneerBackoffice"),
 				TimePeriod = GetTimePeriod(),
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) }
 			};
@@ -102,12 +93,12 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(AutoMetricsProcessorService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				DeliveryFileName = "EasyForexBackOffice",
+				DeliveryID = GetDeliveryId("PayoneerBackoffice"),
+				DeliveryFileName = "BO.xml",
 				Compression = "None",
 				ReaderAdapterType = "Edge.Data.Pipeline.XmlDynamicReaderAdapter, Edge.Data.Pipeline",
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
-				SampleFilePath = @"C:\Development\Edge.bi\Files\EasyForex\Samples\EasyForexBackoffice-sample"
+				MappingConfigPath = String.Format(@"C:\Development\Edge.bi\Files\_Mapping\{0}\Backoffice.xml", ACCOUNT_ID),
+				SampleFilePath = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Backoffice_sample.xml", ACCOUNT_ID)
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -115,7 +106,7 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
 			config.Parameters["Sql.StageCommand"] = "SP_Delivery_Rollback_By_DeliveryOutputID_v291(@DeliveryOutputID:NvarChar,@TableName:NvarChar)";
 			config.Parameters["Sql.RollbackCommand"] = "SP_Delivery_Stage_BO_Generic(@DeliveryFileName:NvarChar,@CommitTableName:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,@OutputIDsPerSignature:varChar,@DeliveryID:NvarChar)";
-			config.Parameters["XPath"] = "Envelope/Body/GetGatewayStatisticsResponse/GetGatewayStatisticsResult/diffgram/DSMarketing/CampaignStatisticsForEasyNet";
+			config.Parameters["XPath"] = "EdgeBI.Metrics/Tracker";
 			config.Parameters["IgnoreDeliveryJsonErrors"] = true;
 
 			return config;
@@ -127,8 +118,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsTransformService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 2, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
+				DeliveryID = GetDeliveryId("PayoneerBackoffice"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -148,8 +139,8 @@ namespace Edge.SDK.TestPipeline
 			{
 				ServiceClass = typeof(MetricsStagingService).AssemblyQualifiedName,
 				Limits = { MaxExecutionTime = new TimeSpan(0, 1, 0, 0) },
-				DeliveryID = GetGuidFromString("Delivery7"),
-				MappingConfigPath = @"C:\Development\Edge.bi\Files\EasyForex\Mapping\Backoffice.xml",
+				DeliveryID = GetDeliveryId("PayoneerBackoffice"),
+				MappingConfigPath = "",
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
@@ -167,8 +158,8 @@ namespace Edge.SDK.TestPipeline
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-4) },
-				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-4) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
+				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
 		}

@@ -17,7 +17,9 @@ namespace Edge.SDK.TestPipeline
 
 			//TestObjectsUpdate.Test();
 
-			TestGoogleAdwordsGeo.Test();
+			//TestGoogleAdwordsGeo.Test();
+
+			TestGenericBackoffice.Test();
 		}
 
 		private void ManulaTests()

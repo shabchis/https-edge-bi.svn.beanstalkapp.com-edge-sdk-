@@ -25,7 +25,7 @@ namespace Edge.SDK.TestPipeline
 		// --> Payoneer
 		protected const int ACCOUNT_ID = 1240244;
 		protected const int CHANNEL_ID = 1;
-		protected const string FILE_DIRECTORY = "GoogleAdwords";
+		protected const string FILE_DIRECTORY = "PayoneerBackoffice";
 		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
 		protected const string ADWORDS_CLIENT_ID = "272-752-0560";   
 
