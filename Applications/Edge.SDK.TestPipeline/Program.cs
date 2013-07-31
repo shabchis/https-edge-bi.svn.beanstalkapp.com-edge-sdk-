@@ -7,7 +7,7 @@ namespace Edge.SDK.TestPipeline
 		{
 			//TestEasyForexBackoffice.Test();
 
-			//TestFacebook.Test();
+			TestFacebook.Test();
 
 			//TestFtpAdvertising.Test();
 
@@ -19,7 +19,7 @@ namespace Edge.SDK.TestPipeline
 
 			//TestGoogleAdwordsGeo.Test();
 
-			TestGenericBackoffice.Test();
+			//TestGenericBackoffice.Test();
 		}
 
 		private void ManulaTests()
