@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="Services\MyBackofficeRetrieverService.cs" />
     <Compile Include="TestGoogleAdwordsGeo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="TestGoogleAdWords.cs" />
     <Compile Include="TestGoogleAdwordsSettings.cs" />
     <Compile Include="TestObjectsUpdate.cs" />
+    <Compile Include="TestGenericBackoffice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -88,6 +90,10 @@
     <ProjectReference Include="..\..\..\edge-services\Edge.Services.BackOffice.EasyForex\branches\3.0.0.0\Edge.Services.BackOffice.EasyForex.csproj">
       <Project>{adc1e54c-4487-40b2-a2aa-ece3853ced89}</Project>
       <Name>Edge.Services.BackOffice.EasyForex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-services\Edge.Services.BackOffice.Generic\branches\3.0.0.0\Edge.Services.BackOffice.Generic.csproj">
+      <Project>{514bf5c6-1670-40f5-96cc-9e49eec09bf3}</Project>
+      <Name>Edge.Services.BackOffice.Generic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\edge-services\Edge.Services.Facebook.GraphApi\branches\3.0.0\Edge.Services.Facebook.GraphApi.csproj">
       <Project>{0ca66633-f417-4724-9fc5-5f8c6e1d72b5}</Project>
