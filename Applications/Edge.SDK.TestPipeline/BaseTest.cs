@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Edge.Core.Configuration;
@@ -16,26 +14,24 @@ namespace Edge.SDK.TestPipeline
 	public abstract class BaseTest
 	{
 		// --> EasyForex
-		//protected const int ACCOUNT_ID = 7;
-		//protected const int CHANNEL_ID = 1;
-		//protected const string FILE_DIRECTORY = "GoogleAdwords";
-		//protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
-		//protected const string ADWORDS_CLIENT_ID = "323-509-6780"; 
-		//protected const string FACEBOOK_ACCOUNT_ID = "52081533";  
-		//protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";   
+		protected const int ACCOUNT_ID = 7;
+		protected const int CHANNEL_ID = 1;
+		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		protected const string ADWORDS_CLIENT_ID = "323-509-6780";
+		protected const string FACEBOOK_ACCOUNT_ID = "52081533";
+		protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";   
 
 		// --> Payoneer
-		protected const int ACCOUNT_ID = 1240244;
-		protected const int CHANNEL_ID = 1;
-		protected const string FILE_DIRECTORY = "Facebook";
-		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
-		protected const string ADWORDS_CLIENT_ID = "272-752-0560";
-		protected const string FACEBOOK_ACCOUNT_ID = "108633745955980";
-		protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAHeQQaHBEacnnXpQVpBNO2heZB6853BmOQiARSv0NQuA4GZCYcBquKqMUP6jq5XftFdGQqK358ELdARsZC9UAzLyW00GOxZBs7U9xjEKSE4nnrjPFZCZBrEe2YQD84vHOnCmgaZA8Vv";   
+		//protected const int ACCOUNT_ID = 1240244;
+		//protected const int CHANNEL_ID = 1;
+		//protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		//protected const string ADWORDS_CLIENT_ID = "272-752-0560";
+		//protected const string FACEBOOK_ACCOUNT_ID = "108633745955980";
+		//protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAHeQQaHBEacnnXpQVpBNO2heZB6853BmOQiARSv0NQuA4GZCYcBquKqMUP6jq5XftFdGQqK358ELdARsZC9UAzLyW00GOxZBs7U9xjEKSE4nnrjPFZCZBrEe2YQD84vHOnCmgaZA8Vv";   
 
 		#region Helper Functions
 		
-		protected static void Init(ServiceConfiguration workflowConfig)
+		protected void Init(ServiceConfiguration workflowConfig)
 		{
 			log4net.Config.XmlConfigurator.Configure();
 			Log.Start();
@@ -65,7 +61,7 @@ namespace Edge.SDK.TestPipeline
 			}
 		}
 
-		protected static ServiceEnvironment CreateEnvironment()
+		protected ServiceEnvironment CreateEnvironment()
 		{
 			// create service env
 			var envConfig = new ServiceEnvironmentConfiguration
@@ -90,12 +86,12 @@ namespace Edge.SDK.TestPipeline
 			return environment;
 		}
 
-		protected static ServiceConfiguration CreatePipelineWorkflow(ServiceConfiguration workflowConfig)
+		protected ServiceConfiguration CreatePipelineWorkflow(ServiceConfiguration workflowConfig)
 		{
 			var profile = new ServiceProfile { Name = "Profile" };
 			profile.Parameters["AccountID"] = ACCOUNT_ID;
 			profile.Parameters["ChannelID"] = CHANNEL_ID;
-			profile.Parameters["FileDirectory"] = FILE_DIRECTORY;
+			profile.Parameters["FileDirectory"] = GetTestName();
 			profile.Parameters["DeliveryFileName"] = "temp.txt";
 			profile.Parameters["SourceUrl"] = "http://google.com";
 			profile.Parameters["UsePassive"] = true;
@@ -106,7 +102,7 @@ namespace Edge.SDK.TestPipeline
 			return profile.DeriveConfiguration(workflowConfig);
 		}
 		
-		protected static Guid GetGuidFromString(string key)
+		protected Guid GetGuidFromString(string key)
 		{
 			var md5Hasher = MD5.Create();
 
@@ -115,7 +111,7 @@ namespace Edge.SDK.TestPipeline
 			return new Guid(data);
 		}
 
-		protected static void CleanEnv(ServiceEnvironment environment)
+		protected void CleanEnv(ServiceEnvironment environment)
 		{
 			// delete service events
 			using (var connection = new SqlConnection(environment.EnvironmentConfiguration.ConnectionString))
@@ -129,7 +125,7 @@ namespace Edge.SDK.TestPipeline
 			}
 		}
 
-		protected static void CleanDelivery()
+		protected void CleanDelivery()
 		{
 			// delete previous delivery tables
 			using (var deliveryConnection = new SqlConnection(AppSettings.GetConnectionString(typeof(MetricsDeliveryManager), Consts.ConnectionStrings.Deliveries)))
@@ -145,9 +141,14 @@ namespace Edge.SDK.TestPipeline
 			}
 		}
 
-		protected static Guid GetDeliveryId(string serviceName = "")
+		protected Guid GetDeliveryId(string serviceName = "")
 		{
 			return GetGuidFromString(String.Format("Delivery-{0}-{1}", ACCOUNT_ID, serviceName));
+		}
+
+		protected string GetTestName()
+		{
+			return GetType().Name.Replace("Test", "");
 		}
 		#endregion
 

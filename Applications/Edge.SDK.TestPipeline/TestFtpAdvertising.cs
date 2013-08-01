@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using Edge.Core;
-using Edge.Core.Configuration;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
-using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
-using Edge.Data.Pipeline.Metrics.Managers;
-using Edge.Data.Pipeline.Metrics.Misc;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
@@ -22,7 +12,7 @@ namespace Edge.SDK.TestPipeline
 	public class TestFtpAdvertising : BaseTest
 	{
 		#region Main
-		public static void Test()
+		public void Test()
 		{
 			// do not clean for transform service
 			CleanDelivery();
@@ -33,7 +23,7 @@ namespace Edge.SDK.TestPipeline
 
 		#region Configuration
 
-		private static ServiceConfiguration CreateBaseWorkflow()
+		private ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
@@ -43,8 +33,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "PipelileTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "PipelileTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PipelileTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "PipelileTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "PipelileTestStaging", ServiceConfiguration = GetStagingConfig()},
@@ -55,7 +45,7 @@ namespace Edge.SDK.TestPipeline
 			return workflowConfig;
 		}
 
-		private static ServiceConfiguration GetInitializerConfig()
+		private ServiceConfiguration GetInitializerConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -68,7 +58,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetRetrieverConfig()
+		private ServiceConfiguration GetRetrieverConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -80,7 +70,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetProcessorConfig()
+		private ServiceConfiguration GetProcessorConfig()
 		{
 			//------------------------------------------
 			// FtpAdvertesing sample (account 1006)
@@ -132,7 +122,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetTransformConfig()
+		private ServiceConfiguration GetTransformConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -152,7 +142,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetStagingConfig()
+		private ServiceConfiguration GetStagingConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -173,7 +163,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static DateTimeRange? GetTimePeriod()
+		private DateTimeRange? GetTimePeriod()
 		{
 			var period = new DateTimeRange
 			{

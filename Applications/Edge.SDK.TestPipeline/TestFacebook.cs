@@ -20,7 +20,7 @@ namespace Edge.SDK.TestPipeline
 	public class TestFacebook : BaseTest
 	{
 		#region Main
-		public static void Test()
+		public void Test()
 		{
 			// do not clean for transform service
 			CleanDelivery();
@@ -31,11 +31,11 @@ namespace Edge.SDK.TestPipeline
 
 		#region Configuration
 
-		private static ServiceConfiguration CreateBaseWorkflow()
+		private ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
-				ServiceName = "GoogleAdwordsWorkflow",
+				ServiceName = "FacebookWorkflow",
 				Workflow = new WorkflowNodeGroup
 				{
 					Mode = WorkflowNodeGroupMode.Linear,
@@ -53,7 +53,7 @@ namespace Edge.SDK.TestPipeline
 			return workflowConfig;
 		}
 
-		private static ServiceConfiguration GetInitializerConfig()
+		private ServiceConfiguration GetInitializerConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -68,11 +68,11 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["TimeZone"] = "2";
 			config.Parameters["Offset"] = "0";
 			config.Parameters["Facebook.BaseServiceAdress"] = "https://graph.facebook.com";
-			config.Parameters["FileDirectory"] = FILE_DIRECTORY;
+			config.Parameters["FileDirectory"] = GetTestName();
 			return config;
 		}
 
-		private static ServiceConfiguration GetRetrieverConfig()
+		private ServiceConfiguration GetRetrieverConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -88,7 +88,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetProcessorConfig()
+		private ServiceConfiguration GetProcessorConfig()
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
@@ -100,13 +100,13 @@ namespace Edge.SDK.TestPipeline
 				ReaderAdapterType = "Edge.Data.Pipeline.XmlDynamicReaderAdapter, Edge.Data.Pipeline",
 				
 				MappingConfigPath = String.Format(@"C:\Development\Edge.bi\Files\_Mapping\{0}\FacebookMapping.xml", ACCOUNT_ID),
-				SampleFilePath = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\FacebookAdGroupStats_sample.json", ACCOUNT_ID)
+				SampleFilePath = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Facebook\AdGroupStats_sample.json", ACCOUNT_ID)
 			};
 
 			// TODO shirat - check if should be a part of configuration class and not parameters
-			config.Parameters["CreativeSampleFile"] = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\AdGroupsCreatives_sample.json", ACCOUNT_ID);
-			config.Parameters["CampaignSampleFile"] = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Campaigns_sample.json", ACCOUNT_ID);
-			config.Parameters["AdGroupSampleFile"]  = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\AdGroups_sample.json", ACCOUNT_ID);
+			config.Parameters["CreativeSampleFile"] = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Facebook\AdGroupsCreatives_sample.json", ACCOUNT_ID);
+			config.Parameters["CampaignSampleFile"] = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Facebook\Campaigns_sample.json", ACCOUNT_ID);
+			config.Parameters["AdGroupSampleFile"]  = String.Format(@"C:\Development\Edge.bi\Files\_Samples\{0}\Facebook\AdGroups_sample.json", ACCOUNT_ID);
 
 			config.Parameters["ChecksumTheshold"] = "0.1";
 			config.Parameters["Sql.TransformCommand"] = "SP_Delivery_Transform_BO_Generic(@DeliveryID:NvarChar,@DeliveryTablePrefix:NvarChar,@MeasuresNamesSQL:NvarChar,@MeasuresFieldNamesSQL:NvarChar,?CommitTableName:NvarChar)";
@@ -118,7 +118,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetTransformConfig()
+		private ServiceConfiguration GetTransformConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -139,7 +139,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetStagingConfig()
+		private ServiceConfiguration GetStagingConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -160,11 +160,13 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static DateTimeRange? GetTimePeriod()
+		private DateTimeRange? GetTimePeriod()
 		{
 			var period = new DateTimeRange
 			{
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-30) },
+				//Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = new DateTime(2012, 11, 01) },
+				//End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = new DateTime(2012, 11, 30) }
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
