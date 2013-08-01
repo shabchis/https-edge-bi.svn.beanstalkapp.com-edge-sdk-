@@ -1,23 +1,19 @@
 ﻿using Edge.Core;
 using Edge.Core.Services;
 using Edge.Core.Services.Workflow;
-using Edge.Core.Utilities;
 using Edge.Data.Pipeline;
 using Edge.Data.Pipeline.Metrics.Services;
 using Edge.Data.Pipeline.Metrics.Services.Configuration;
 using Edge.Data.Pipeline.Services;
 using Edge.Services.Google.AdWords.Performance;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Edge.SDK.TestPipeline
 {
 	public class TestGoogleAdwordsGeo : BaseTest
 	{
 		#region Main
-		public static void Test()
+		public void Test()
 		{
 			// do not clean for transform service
 			//CleanDelivery();
@@ -28,7 +24,7 @@ namespace Edge.SDK.TestPipeline
 
 		#region Configuration
 
-		private static ServiceConfiguration CreateBaseWorkflow()
+		private ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
@@ -38,9 +34,9 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
-									//new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "GoogleAdwordsTestProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "GoogleAdwordsTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
@@ -50,7 +46,7 @@ namespace Edge.SDK.TestPipeline
 			return workflowConfig;
 		}
 
-		private static ServiceConfiguration GetInitializerConfig()
+		private ServiceConfiguration GetInitializerConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -91,7 +87,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetRetrieverConfig()
+		private ServiceConfiguration GetRetrieverConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -109,7 +105,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetProcessorConfig()
+		private ServiceConfiguration GetProcessorConfig()
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
@@ -142,7 +138,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetTransformConfig()
+		private ServiceConfiguration GetTransformConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -163,7 +159,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetStagingConfig()
+		private ServiceConfiguration GetStagingConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -193,7 +189,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static DateTimeRange? GetTimePeriod()
+		private DateTimeRange? GetTimePeriod()
 		{
 			var period = new DateTimeRange
 			{

@@ -8,9 +8,6 @@ using Edge.Data.Pipeline.Services;
 using Edge.SDK.TestPipeline.Services;
 using Edge.Services.BackOffice.Generic;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Edge.SDK.TestPipeline
 {
@@ -18,7 +15,7 @@ namespace Edge.SDK.TestPipeline
 	{
 		#region Main
 
-		public static void Test()
+		public void Test()
 		{
 			// do not clean for transform service
 			CleanDelivery();
@@ -30,7 +27,7 @@ namespace Edge.SDK.TestPipeline
 
 		#region Configuration
 
-		public static ServiceConfiguration CreateBaseWorkflow()
+		public ServiceConfiguration CreateBaseWorkflow()
 		{
 			var workflowConfig = new WorkflowServiceConfiguration
 			{
@@ -40,8 +37,8 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "PayoneerBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "PayoneerBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "PayoneerBackofficeInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "PayoneerBackofficeRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "PayoneerBackofficeProcessor", ServiceConfiguration = GetProcessorConfig()},
 									new WorkflowStep {Name = "PayoneerBackofficeTrasform", ServiceConfiguration = GetTransformConfig()},
 									new WorkflowStep {Name = "PayoneerBackofficeStaging", ServiceConfiguration = GetStagingConfig()},
@@ -52,7 +49,7 @@ namespace Edge.SDK.TestPipeline
 			return workflowConfig;
 		}
 
-		private static ServiceConfiguration GetInitializerConfig()
+		private ServiceConfiguration GetInitializerConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -72,7 +69,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetRetrieverConfig()
+		private ServiceConfiguration GetRetrieverConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -87,7 +84,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetProcessorConfig()
+		private ServiceConfiguration GetProcessorConfig()
 		{
 			var config = new AutoMetricsProcessorServiceConfiguration
 			{
@@ -112,7 +109,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetTransformConfig()
+		private ServiceConfiguration GetTransformConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -133,7 +130,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static ServiceConfiguration GetStagingConfig()
+		private ServiceConfiguration GetStagingConfig()
 		{
 			var config = new PipelineServiceConfiguration
 			{
@@ -154,7 +151,7 @@ namespace Edge.SDK.TestPipeline
 			return config;
 		}
 
-		private static DateTimeRange? GetTimePeriod()
+		private DateTimeRange? GetTimePeriod()
 		{
 			var period = new DateTimeRange
 			{

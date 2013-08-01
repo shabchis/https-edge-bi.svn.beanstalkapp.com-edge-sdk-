@@ -62,6 +62,7 @@
     <Compile Include="TestGoogleAdwordsSettings.cs" />
     <Compile Include="TestObjectsUpdate.cs" />
     <Compile Include="TestGenericBackoffice.cs" />
+    <Compile Include="TestSalesForce.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

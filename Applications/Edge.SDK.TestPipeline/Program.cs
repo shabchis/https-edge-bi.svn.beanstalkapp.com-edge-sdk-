@@ -1,25 +1,19 @@
-﻿using Edge.Data.Pipeline.Metrics.Indentity;
-namespace Edge.SDK.TestPipeline
+﻿namespace Edge.SDK.TestPipeline
 {
 	class Program
 	{
 		static void Main()
 		{
-			//TestEasyForexBackoffice.Test();
-
-			TestFacebook.Test();
-
-			//TestFtpAdvertising.Test();
-
-			//TestGoogleAdWords.Test();
+			//var test = new TestEasyForexBackoffice();
+			var test = new TestFacebook();
+			//var test = new TestFtpAdvertising();
+			//var test = new TestGenericBackoffice();
+			//var test = new TestGoogleAdWords();
+			//var test = new TestGoogleAdwordsGeo();
+			//var test = new TestGoogleAdwordsSettings();
+			//var test = new TestObjectsUpdate();
 			
-			//TestGoogleAdwordsSettings.Test();
-
-			//TestObjectsUpdate.Test();
-
-			//TestGoogleAdwordsGeo.Test();
-
-			//TestGenericBackoffice.Test();
+			test.Test();
 		}
 
 		private void ManulaTests()
