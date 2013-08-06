@@ -5,13 +5,14 @@
 		static void Main()
 		{
 			//var test = new TestEasyForexBackoffice();
-			var test = new TestFacebook();
+			//var test = new TestFacebook();
 			//var test = new TestFtpAdvertising();
 			//var test = new TestGenericBackoffice();
 			//var test = new TestGoogleAdWords();
 			//var test = new TestGoogleAdwordsGeo();
 			//var test = new TestGoogleAdwordsSettings();
 			//var test = new TestObjectsUpdate();
+			var test = new TestSalesForce();
 			
 			test.Test();
 		}

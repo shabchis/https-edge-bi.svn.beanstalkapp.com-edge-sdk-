@@ -104,6 +104,10 @@
       <Project>{452F5585-4DE6-431B-B691-2CE4EC06E49A}</Project>
       <Name>Edge.Services.Google.AdWords</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\edge-services\Edge.Services.SalesForce\branches\3.0.0.0\Edge.Services.SalesForce\Edge.Services.SalesForce.csproj">
+      <Project>{c6f85fb9-417a-4666-a43e-9585cc831ec6}</Project>
+      <Name>Edge.Services.SalesForce</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
