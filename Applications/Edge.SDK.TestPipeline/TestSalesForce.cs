@@ -14,7 +14,6 @@ namespace Edge.SDK.TestPipeline
 {
 	public class TestSalesForce : BaseTest
 	{
-
 		#region Main
 		public void Test()
 		{
@@ -37,11 +36,11 @@ namespace Edge.SDK.TestPipeline
 					Mode = WorkflowNodeGroupMode.Linear,
 					Nodes = new LockableList<WorkflowNode>
 								{
-									//new WorkflowStep {Name = "SaleForceTestInitializer", ServiceConfiguration = GetInitializerConfig()},
-									//new WorkflowStep {Name = "SaleForceTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
+									new WorkflowStep {Name = "SaleForceTestInitializer", ServiceConfiguration = GetInitializerConfig()},
+									new WorkflowStep {Name = "SaleForceTestRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "SaleForceTestProcessor", ServiceConfiguration = GetProcessorConfig()},
-									//new WorkflowStep {Name = "SaleForceTestTrasform", ServiceConfiguration = GetTransformConfig()},
-									//new WorkflowStep {Name = "SaleForceTestStaging", ServiceConfiguration = GetStagingConfig()},
+									new WorkflowStep {Name = "SaleForceTestTrasform", ServiceConfiguration = GetTransformConfig()},
+									new WorkflowStep {Name = "SaleForceTestStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
