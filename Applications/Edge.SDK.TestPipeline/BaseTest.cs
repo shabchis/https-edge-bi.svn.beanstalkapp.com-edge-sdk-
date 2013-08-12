@@ -13,14 +13,14 @@ namespace Edge.SDK.TestPipeline
 {
 	public abstract class BaseTest
 	{
-		#region Consts
+		#region Account Consts
 		// --> EasyForex
-		//protected const int ACCOUNT_ID = 7;
-		//protected const int CHANNEL_ID = 1;
-		//protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
-		//protected const string ADWORDS_CLIENT_ID = "323-509-6780";
-		//protected const string FACEBOOK_ACCOUNT_ID = "52081533";
-		//protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";   
+		protected const int ACCOUNT_ID = 7;
+		protected const int CHANNEL_ID = 1;
+		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		protected const string ADWORDS_CLIENT_ID = "323-509-6780";
+		protected const string FACEBOOK_ACCOUNT_ID = "52081533";
+		protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";   
 
 		// --> Payoneer
 		//protected const int ACCOUNT_ID = 1240244;
@@ -31,12 +31,12 @@ namespace Edge.SDK.TestPipeline
 		//protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAHeQQaHBEacnnXpQVpBNO2heZB6853BmOQiARSv0NQuA4GZCYcBquKqMUP6jq5XftFdGQqK358ELdARsZC9UAzLyW00GOxZBs7U9xjEKSE4nnrjPFZCZBrEe2YQD84vHOnCmgaZA8Vv";   
 
 		// --> GreenSQL
-		protected const int ACCOUNT_ID = 1240250;
-		protected const int CHANNEL_ID = 3;
-		protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
-		protected const string ADWORDS_CLIENT_ID = "323-509-6780";
-		protected const string FACEBOOK_ACCOUNT_ID = "52081533";
-		protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";
+		//protected const int ACCOUNT_ID = 1240250;
+		//protected const int CHANNEL_ID = 3;
+		//protected const string ADWORDS_MCC_EMAIL = "ppc.easynet@gmail.com";
+		//protected const string ADWORDS_CLIENT_ID = "323-509-6780";
+		//protected const string FACEBOOK_ACCOUNT_ID = "52081533";
+		//protected const string FACEBOOK_ACCESS_TOKEN = "CAACZAMUPZCAd0BAC8C5u6ncZCQ9Q6VoBuxfkfocHlvM8fdbn5IDX90YXTaRKaW0IcgyiAZA3CqV80ELmpLZCGZCBfNlj36oSotTvjBw5r6lbXfU8UzawsRDi83UCZAAZClZAgGbP8X9qP86CiZCzeNh10D";
 		#endregion
 
 		#region Helper Functions
