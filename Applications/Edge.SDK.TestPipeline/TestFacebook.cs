@@ -44,8 +44,8 @@ namespace Edge.SDK.TestPipeline
 									new WorkflowStep {Name = "FacebookInitializer", ServiceConfiguration = GetInitializerConfig()},
 									new WorkflowStep {Name = "FacebookRetriever", ServiceConfiguration = GetRetrieverConfig()},
 									new WorkflowStep {Name = "FacebookProcessor", ServiceConfiguration = GetProcessorConfig()},
-									new WorkflowStep {Name = "FacebookTrasform", ServiceConfiguration = GetTransformConfig()},
-									new WorkflowStep {Name = "FacebookStaging", ServiceConfiguration = GetStagingConfig()},
+									//new WorkflowStep {Name = "FacebookTrasform", ServiceConfiguration = GetTransformConfig()},
+									//new WorkflowStep {Name = "FacebookStaging", ServiceConfiguration = GetStagingConfig()},
 								}
 				},
 				Limits = { MaxExecutionTime = new TimeSpan(0, 3, 0, 0) }
@@ -68,6 +68,10 @@ namespace Edge.SDK.TestPipeline
 			config.Parameters["TimeZone"] = "2";
 			config.Parameters["Offset"] = "0";
 			config.Parameters["Facebook.BaseServiceAdress"] = "https://graph.facebook.com";
+			config.Parameters["Facebook.Fields.AdGroupCreative"] = "creative_id,type,title,body,image_hash,link_url,name,run_status,preview_url,count_current_adgroups,id,image_url";
+			config.Parameters["Facebook.Fields.AdGroup"] = "id,account_id,adgroup_status,bid_info,campaign_id,conversion_specs,creative_ids,impression_control_map,last_updated_by_app_id,locations,name,targeting,tracking_pixel_ids,tracking_specs,updated_time,created_time,ad_status";
+			config.Parameters["Facebook.Fields.Campaign"] = "id,account_id,name,campaign_status,daily_imps,frequency_cap,frequency_cap_reset_period,start_time,end_time,updated_time,created_time";
+
 			config.Parameters["FileDirectory"] = GetTestName();
 			return config;
 		}
@@ -166,7 +170,7 @@ namespace Edge.SDK.TestPipeline
 			{
 				//Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = new DateTime(2012, 11, 01) },
 				//End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = new DateTime(2012, 11, 30) }
-				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-1) },
+				Start = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.Start, BaseDateTime = DateTime.Today.AddDays(-7) },
 				End = new DateTimeSpecification { Alignment = DateTimeSpecificationAlignment.End, BaseDateTime = DateTime.Today.AddSeconds(-1) }
 			};
 			return period;
