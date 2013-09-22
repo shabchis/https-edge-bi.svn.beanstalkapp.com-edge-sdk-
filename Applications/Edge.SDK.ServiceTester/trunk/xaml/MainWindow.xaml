@@ -6,8 +6,8 @@
 		xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
 		Icon="..\images\App.ico"
         Title="Edge Service Tester"
-		Height="480"
-		Width="640">
+		Height="425"
+		Width="825">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
@@ -23,6 +23,10 @@
 				</Style>
 			</ToolBarTray.Resources>
 			<ToolBar>
+				<ComboBox x:Name="_Toolbar_Account" MinWidth="150" ItemsSource="{Binding Accounts}" SelectedValue="{Binding SelectedAccount}" />
+				
+				<Separator/>
+				
 				<!-- Start button -->
 				<Button x:Name="_Toolbar_Start" Click="_Toolbar_Start_Click">
 					<StackPanel Orientation="Horizontal">
@@ -38,21 +42,7 @@
 						<TextBlock Text="Abort"/>
 					</StackPanel>
 				</Button>
-				
-				<Separator/>
-				
-				<Button x:Name="_Toolbar_Advanced" Click="_Toolbar_Advanced_Click">
-					<Button.Style>
-						<Style TargetType="{x:Type Button}">
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding ElementName=_Tree, Path=SelectedItem}" Value="{x:Null}">
-									<Setter Property="IsEnabled" Value="False"/>
-								</DataTrigger>
-							</Style.Triggers>
-						</Style>
-					</Button.Style>
-					<TextBlock Text="Advanced..."/>
-				</Button>
+
 			</ToolBar>
 		</ToolBarTray>
 		
@@ -114,7 +104,7 @@
 				<GridViewColumn Header="Status" Width="120">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Status}"/>
+							<TextBlock Text="{Binding Status}" Foreground="#999"/>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>

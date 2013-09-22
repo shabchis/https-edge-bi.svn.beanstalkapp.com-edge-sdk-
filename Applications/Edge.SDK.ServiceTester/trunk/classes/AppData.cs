@@ -17,9 +17,9 @@ namespace Edge.SDK.ServiceTester
 				Directory.CreateDirectory(AppDataDirectory);
 		}
 
-		public static T Load<T>(string serviceName) where T: class
+		public static T Load<T>(string entryName) where T: class
 		{
-			string file = Path.Combine(AppDataDirectory, Uri.EscapeUriString(serviceName) + ".xml");
+			string file = Path.Combine(AppDataDirectory, Uri.EscapeUriString(entryName) + ".xml");
 			if (!File.Exists(file))
 				return null;
 
@@ -30,9 +30,9 @@ namespace Edge.SDK.ServiceTester
 			}
 		}
 
-		public static void Save(string serviceName, object value)
+		public static void Save(string entryName, object value)
 		{
-			string file = Path.Combine(AppDataDirectory, Uri.EscapeUriString(serviceName) + ".xml");
+			string file = Path.Combine(AppDataDirectory, Uri.EscapeUriString(entryName) + ".xml");
 			XmlSerializer serializer = new XmlSerializer(value.GetType());
 			using (FileStream stream = File.Open(file, FileMode.Create))
 			{

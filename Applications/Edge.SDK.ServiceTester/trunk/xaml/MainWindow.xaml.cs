@@ -45,15 +45,28 @@ namespace Edge.SDK.ServiceTester
 				//App.BindingData.Services[0].Start();
 		}
 
+
 		private void _Toolbar_Start_Click(object sender, RoutedEventArgs e)
 		{
 			var service = _Tree.SelectedItem as ServiceDisplayInfo;
 			if (service == null)
 				return;
 
-			service.Start();
+			if (App.BindingData.SelectedAccount.AccountConfig == null)
+			{
+				service.Start();
+			}
+			else
+			{
+				int accountID = App.BindingData.SelectedAccount.AccountConfig.ID;
+				if (service.Accounts.ContainsKey(accountID))
+					service.Start(accountID);
+				else
+					MessageBox.Show("Service is not configured under selected account.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
+		/*
 		private void _Toolbar_Advanced_Click(object sender, RoutedEventArgs e)
 		{
 			var service = _Tree.SelectedItem as ServiceDisplayInfo;
@@ -78,6 +91,7 @@ namespace Edge.SDK.ServiceTester
 				}
 			}
 		}
+		*/
 	}
 
 	public class ConsoleWriter : TextWriter

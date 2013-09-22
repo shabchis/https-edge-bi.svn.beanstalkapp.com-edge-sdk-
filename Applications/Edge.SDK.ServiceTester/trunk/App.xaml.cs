@@ -20,7 +20,7 @@ namespace Edge.SDK.ServiceTester
 	/// </summary>
 	public partial class App : Application
 	{
-		public static BindingData BindingData = new BindingData();
+		public static BindingData BindingData = new BindingData() { SelectedAccount = new AccountDisplayInfo() };
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -64,6 +64,29 @@ namespace Edge.SDK.ServiceTester
 				if (serviceConfig.IsPublic)
 					BindingData.Services.Add(new ServiceDisplayInfo(serviceConfig));
 			}
+
+			BindingData.Accounts = new ObservableCollection<AccountDisplayInfo>();
+			BindingData.Accounts.Add(BindingData.SelectedAccount);
+			foreach (AccountElement accountConfig in EdgeServicesConfiguration.Current.Accounts)
+			{
+				BindingData.Accounts.Add(new AccountDisplayInfo() { AccountConfig = accountConfig });
+			}
+
+			// Remember last selected account
+			string lastUsedAccount = AppData.Load<string>("BindingData.SelectedAccount");
+			if (lastUsedAccount != null)
+			{
+				int accountID;
+				AccountElement accountConfig;
+				if (Int32.TryParse(lastUsedAccount, out accountID) && (accountConfig = EdgeServicesConfiguration.Current.Accounts.GetAccount(accountID)) != null)
+					BindingData.SelectedAccount = BindingData.Accounts.First(acc => acc.AccountConfig == accountConfig);
+			}
+
+			BindingData.PropertyChanged += new PropertyChangedEventHandler((sender, args) =>
+			{
+				if (args.PropertyName == "SelectedAccount")
+					AppData.Save("BindingData.SelectedAccount", BindingData.SelectedAccount.AccountConfig.ID.ToString());
+			});
 		}
 
 		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -74,9 +97,34 @@ namespace Edge.SDK.ServiceTester
 		}
 	}
 
-	public class BindingData
+	public class AccountDisplayInfo
 	{
+		public AccountElement AccountConfig { get; set; }
+
+		public override string ToString()
+		{
+			return this.AccountConfig == null ? "Accounts disabled" : String.Format("{0} - {1}", this.AccountConfig.ID, this.AccountConfig.Name);
+		}
+	}
+
+	public class BindingData: INotifyPropertyChanged
+	{
+		AccountDisplayInfo _account;
+		public AccountDisplayInfo SelectedAccount
+		{
+			get { return _account; }
+			set
+			{
+				_account = value;
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("SelectedAccount"));
+			}
+		}
+
+		public ObservableCollection<AccountDisplayInfo> Accounts { get; set; }
 		public ObservableCollection<ServiceDisplayInfo> Services { get; set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
 	
