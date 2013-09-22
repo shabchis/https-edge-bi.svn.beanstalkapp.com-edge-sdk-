@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
 using System.Collections.ObjectModel;
+using Edge.Data.Pipeline.Configuration;
 
 namespace Edge.SDK.ServiceTester
 {
