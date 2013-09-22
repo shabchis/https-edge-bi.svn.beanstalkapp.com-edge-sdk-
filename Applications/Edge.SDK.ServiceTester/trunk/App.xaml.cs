@@ -12,7 +12,6 @@ using Edge.Core.Configuration;
 using Edge.Core.Services;
 using System.Windows.Controls;
 using System.Text;
-using Edge.Core.Services.Configuration;
 
 namespace Edge.SDK.ServiceTester
 {
