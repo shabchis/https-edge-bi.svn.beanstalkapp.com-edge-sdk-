@@ -6,6 +6,7 @@ using Edge.Core.Services;
 using System.ComponentModel;
 using Edge.Core.Configuration;
 using System.Collections.ObjectModel;
+using Edge.Core;
 
 namespace Edge.SDK.ServiceTester
 {
@@ -23,6 +24,12 @@ namespace Edge.SDK.ServiceTester
 		}
 
 		public ServiceElement Configuration
+		{
+			get;
+			private set;
+		}
+
+		public Dictionary<int, AccountServiceElement> Accounts
 		{
 			get;
 			private set;
@@ -76,6 +83,12 @@ namespace Edge.SDK.ServiceTester
 		}
 
 		public bool IsExpanded
+		{
+			get;
+			set;
+		}
+
+		public SettingsCollection Options
 		{
 			get;
 			set;
@@ -135,6 +148,17 @@ namespace Edge.SDK.ServiceTester
 						Children.Add(new ServiceDisplayInfo(step.BaseConfiguration.Element, step) { Parent = this });
 				}
 			}
+			
+			this.Accounts = new Dictionary<int,AccountServiceElement>();
+
+			// Find per-account configurations
+			foreach (AccountElement account in EdgeServicesConfiguration.Current.Accounts)
+			{
+				foreach (AccountServiceElement accountService in account.Services)
+					if (accountService.Uses.Element == configuration)
+						this.Accounts.Add(account.ID, accountService);
+			}
+
 			IsExpanded = true;
 		}
 
@@ -150,21 +174,25 @@ namespace Edge.SDK.ServiceTester
 			IsExpanded = true;
 		}
 
-		public void Start(Dictionary<string,string> options = null)
+		public void Start(int? accountID = null, Dictionary<string,string> options = null)
 		{
-			int accountID;
-			string s = Configuration.Options["AccountID"];
-			ServiceElement configuration = options == null ?
-				this.Configuration :
-				new ActiveServiceElement(this.Configuration);
+			ActiveServiceElement configuration;
+			if (accountID == null)
+			{
+				configuration =	new ActiveServiceElement(this.Configuration);
+				if (options != null)
+					configuration.Options.Merge(options);
 
-			if (options != null)
-				configuration.Options.Merge(options);
-
-			if (s == null || !Int32.TryParse(s, out accountID))
 				Start(Service.CreateInstance(configuration));
+			}
 			else
-				Start(Service.CreateInstance(configuration, accountID));
+			{
+				configuration = new ActiveServiceElement(this.Accounts[accountID.Value]);
+				if (options != null)
+					configuration.Options.Merge(options);
+
+				Start(Service.CreateInstance(configuration, accountID.Value));
+			}
 		}
 
 		// ...................
@@ -175,7 +203,7 @@ namespace Edge.SDK.ServiceTester
 
 		void Start(ServiceInstance instance)
 		{
-			if (Instance != null)
+			if (Instance != null && Instance.State != ServiceState.Ended)
 				throw new InvalidOperationException("Service is already started.");
 
 			AttachToInstance(instance);
