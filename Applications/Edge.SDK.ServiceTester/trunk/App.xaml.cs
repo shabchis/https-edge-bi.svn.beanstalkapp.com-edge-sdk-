@@ -10,9 +10,9 @@ using System.Reflection;
 using System.Windows;
 using Edge.Core.Configuration;
 using Edge.Core.Services;
-using Edge.Data.Pipeline;
 using System.Windows.Controls;
 using System.Text;
+using Edge.Core.Services.Configuration;
 
 namespace Edge.SDK.ServiceTester
 {
